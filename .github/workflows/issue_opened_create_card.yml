@@ -33,6 +33,7 @@ jobs:
           python3 - <<'PY'
           import json
           import os
+          import re
           import urllib.parse
           import urllib.request
 
@@ -52,6 +53,38 @@ jobs:
           issue_url = os.environ["ISSUE_URL"]
           issue_author = os.environ["ISSUE_AUTHOR"]
 
+          def trello_request(method, path, params=None):
+              query = {
+                  "key": os.environ["TRELLO_API_KEY"],
+                  "token": os.environ["TRELLO_API_TOKEN"],
+              }
+              if params:
+                  query.update(params)
+
+              url = f"https://api.trello.com/1{path}?{urllib.parse.urlencode(query)}"
+              req = urllib.request.Request(
+                  url,
+                  method=method,
+                  headers={"Accept": "application/json"},
+              )
+
+              with urllib.request.urlopen(req) as resp:
+                  return json.loads(resp.read().decode("utf-8"))
+
+          # Extrai checklist do markdown da issue:
+          # - [ ] item
+          # - [x] item
+          task_pattern = re.compile(r"^\s*-\s\[( |x|X)\]\s+(.+?)\s*$", re.MULTILINE)
+          task_matches = task_pattern.findall(issue_body)
+
+          task_items = [
+              {
+                  "name": text.strip(),
+                  "checked": mark.lower() == "x",
+              }
+              for mark, text in task_matches
+          ]
+
           trello_name = f"#{issue_number} - {issue_title}"
           trello_desc = (
               f"GitHub issue: {issue_url}\n"
@@ -59,24 +92,38 @@ jobs:
               f"{issue_body}"
           )
 
-          trello_payload = urllib.parse.urlencode({
-              "idList": os.environ["TRELLO_LIST_ID"],
-              "name": trello_name,
-              "desc": trello_desc,
-              "key": os.environ["TRELLO_API_KEY"],
-              "token": os.environ["TRELLO_API_TOKEN"],
-          }).encode("utf-8")
-
-          trello_req = urllib.request.Request(
-              "https://api.trello.com/1/cards",
-              data=trello_payload,
-              method="POST",
-              headers={"Accept": "application/json"},
+          # 1) Cria o card
+          card = trello_request(
+              "POST",
+              "/cards",
+              {
+                  "idList": os.environ["TRELLO_LIST_ID"],
+                  "name": trello_name,
+                  "desc": trello_desc,
+              },
           )
 
-          with urllib.request.urlopen(trello_req) as resp:
-              card = json.loads(resp.read().decode("utf-8"))
+          # 2) Só cria checklist se encontrou itens no formato - [ ] ou - [x]
+          if task_items:
+              checklist = trello_request(
+                  "POST",
+                  f"/cards/{card['id']}/checklists",
+                  {
+                      "name": "Checklist",
+                  },
+              )
 
+              for item in task_items:
+                  trello_request(
+                      "POST",
+                      f"/checklists/{checklist['id']}/checkItems",
+                      {
+                          "name": item["name"],
+                          "checked": "true" if item["checked"] else "false",
+                      },
+                  )
+
+          # 3) Comenta na issue com o link do card
           comment_payload = json.dumps({
               "body": f"Foi criado o seguinte card no Trello: {card['url']}, na coluna de Backlog."
           }).encode("utf-8")
