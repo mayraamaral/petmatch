@@ -78,7 +78,7 @@ jobs:
               card = json.loads(resp.read().decode("utf-8"))
 
           comment_payload = json.dumps({
-              "body": f"Created Trello card: {card['url']}"
+              "body": f"Foi criado o seguinte card no Trello: {card['url']}, na coluna de Backlog."
           }).encode("utf-8")
 
           gh_req = urllib.request.Request(
