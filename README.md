@@ -1,50 +1,89 @@
-# Welcome to your Expo app 👋
+[English version below](#petmatch-english)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# PetMatch
+
+O **PetMatch** é um aplicativo para aproximar animais disponíveis para adoção e pessoas que querem adotar, tornando o processo mais simples, humano e transparente.
+
+Este repositório é um app **React Native** com **Expo**, usando roteamento baseado em arquivos (**Expo Router**).
+
+## Ambiente de desenvolvimento
+
+O projeto foi configurado e testado num **PC Linux (Ubuntu 24)**; o app é executado no **iPhone** (com **Expo Go**), na mesma rede que o computador.
+
+## Começar
+
+1. Instale as dependências: `pnpm install`
+2. Inicie o servidor de desenvolvimento: `pnpm start`
+3. No iPhone, instale o **Expo Go** e leia o QR code do terminal com a câmera do telefone (PC e telefone tem que estar na mesma rede Wi‑Fi).
+
+Instruções detalhadas, pré-requisitos e scripts úteis estão na [versão em inglês](#petmatch-english) abaixo.
+
+---
+
+<a id="petmatch-english"></a>
+
+# PetMatch
+
+**PetMatch** is an app that connects animals looking for a home with people who want to adopt — making adoption easier, kinder, and clearer.
+
+This repo is a **React Native** app built with **Expo** and file-based routing (**Expo Router**).
+
+## Development setup
+
+The app is developed on **Linux (Ubuntu 24)** and run on an **iPhone** (with **Expo Go**), on the **same Wi‑Fi network** as your machine.
 
 ## Get started
 
-1. Install dependencies
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- [pnpm](https://pnpm.io/installation)
+- On your smartphone: install [Expo Go](https://expo.dev/go) from the App Store (or Play Store)
+
+### Install and run
+
+1. **Install dependencies**
 
    ```bash
-   npm install
+   pnpm install
    ```
 
-2. Start the app
+2. **Start the dev server**
 
    ```bash
-   npx expo start
+   pnpm start
    ```
 
-In the output, you'll find options to open the app in a
+3. **Open on your iPhone**
+   - Scan the QR code from the terminal with the **Expo Go Camera** (for Android) or **iPhone Camera** (for iOS).
+   - Ensure the phone and your machine are on the **same network**; if the connection fails, try tunnel mode in the Expo CLI when prompted.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Useful scripts
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+| Command        | Description             |
+| -------------- | ----------------------- |
+| `pnpm start`   | Start Expo (dev server) |
+| `pnpm android` | Start for Android       |
+| `pnpm ios`     | Start for iOS (macOS)   |
+| `pnpm web`     | Start for web           |
+| `pnpm lint`    | Run ESLint              |
 
-## Get a fresh project
+### Project layout
 
-When you're ready, run:
+Screens and navigation under the **`app`** directory, this project uses [Expo Router](https://docs.expo.dev/router/introduction/).
+
+### Reset to a blank app (optional)
+
+When you want a clean slate:
 
 ```bash
-npm run reset-project
+pnpm run reset-project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This moves the starter code to **`app-example`** and creates a fresh **`app`** folder.
 
 ## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Expo documentation](https://docs.expo.dev/)
+- [Expo Router](https://docs.expo.dev/router/introduction/)
+- [React Native](https://reactnative.dev/)
