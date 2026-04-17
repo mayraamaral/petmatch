@@ -17,10 +17,10 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: dev
-    name: Move Trello Card to Finalizado
+    name: Move Trello Card to Completed List
 
     steps:
-      - name: Move related Trello card(s) to Finalizado
+      - name: Move related Trello card(s) to Completed List
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_API_URL: ${{ github.api_url }}
@@ -31,6 +31,7 @@ jobs:
           REPO_NAME: ${{ github.event.repository.name }}
 
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGED_AT: ${{ github.event.pull_request.merged_at }}
 
           TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
           TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}
@@ -44,6 +45,7 @@ jobs:
           import urllib.error
           import urllib.parse
           import urllib.request
+          from datetime import datetime
 
           required = [
               "GH_TOKEN",
@@ -53,6 +55,7 @@ jobs:
               "REPO_OWNER",
               "REPO_NAME",
               "PR_NUMBER",
+              "MERGED_AT",
               "TRELLO_API_KEY",
               "TRELLO_API_TOKEN",
               "TRELLO_LIST_ID",
@@ -67,6 +70,7 @@ jobs:
           repo_name = os.environ["REPO_NAME"]
           pr_number = int(os.environ["PR_NUMBER"])
           completed_list_id = os.environ["TRELLO_COMPLETED_LIST_ID"]
+          merged_at = os.environ["MERGED_AT"]
 
           def http_json(url, method="GET", data=None, headers=None):
               req = urllib.request.Request(
@@ -236,11 +240,50 @@ jobs:
                   {"fields": "id,name,idList,url"},
               )
 
+          def trello_comment_exists(card_id, text):
+              actions = trello_request(
+                  "GET",
+                  f"/cards/{card_id}/actions",
+                  {
+                      "filter": "commentCard",
+                      "limit": 100,
+                      "fields": "data",
+                  },
+              ) or []
+
+              for action in actions:
+                  action_text = ((action.get("data") or {}).get("text") or "").strip()
+                  if action_text == text:
+                      return True
+
+              return False
+
+          def format_date_pt_br(iso_datetime):
+              dt = datetime.fromisoformat(iso_datetime.replace("Z", "+00:00"))
+              meses = {
+                  1: "janeiro",
+                  2: "fevereiro",
+                  3: "março",
+                  4: "abril",
+                  5: "maio",
+                  6: "junho",
+                  7: "julho",
+                  8: "agosto",
+                  9: "setembro",
+                  10: "outubro",
+                  11: "novembro",
+                  12: "dezembro",
+              }
+              return f"{dt.day} de {meses[dt.month]} de {dt.year}"
+
           issue_numbers = get_linked_issue_numbers()
 
           if not issue_numbers:
               print("No linked issues found through closingIssuesReferences.")
               raise SystemExit(0)
+
+          merged_date_text = format_date_pt_br(merged_at)
+          merge_comment_text = f"O PR foi mergeado em {merged_date_text}"
 
           for issue_number in issue_numbers:
               card_ref = find_trello_card_ref_from_issue_comments(issue_number)
@@ -256,15 +299,23 @@ jobs:
               card_id = card["id"]
               current_list_id = card.get("idList")
 
-              if current_list_id == completed_list_id:
-                  print(f"Trello card for issue #{issue_number} is already in Finalizado.")
-                  continue
+              if current_list_id != completed_list_id:
+                  trello_request(
+                      "PUT",
+                      f"/cards/{card_id}",
+                      {"idList": completed_list_id},
+                  )
+                  print(f"Moved Trello card for issue #{issue_number} to Completed List.")
+              else:
+                  print(f"Trello card for issue #{issue_number} is already in Completed List.")
 
-              trello_request(
-                  "PUT",
-                  f"/cards/{card_id}",
-                  {"idList": completed_list_id},
-              )
-
-              print(f"Moved Trello card for issue #{issue_number} to Finalizado.")
+              if not trello_comment_exists(card_id, merge_comment_text):
+                  trello_request(
+                      "POST",
+                      f"/cards/{card_id}/actions/comments",
+                      {"text": merge_comment_text},
+                  )
+                  print(f"Added merge comment to Trello card for issue #{issue_number}.")
+              else:
+                  print(f"Merge comment already exists on Trello card for issue #{issue_number}.")
           PY
