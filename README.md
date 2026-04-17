@@ -54,7 +54,7 @@ The app is developed on **Linux (Ubuntu 24)** and run on an **iPhone** (with **E
    pnpm start
    ```
 
-3. **Open on your iPhone**
+3. **Open on your smartphone**
    - Scan the QR code from the terminal with the **Expo Go Camera** (for Android) or **iPhone Camera** (for iOS).
    - Ensure the phone and your machine are on the **same network**; if the connection fails, try tunnel mode in the Expo CLI when prompted.
 
