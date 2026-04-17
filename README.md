@@ -14,7 +14,7 @@ O projeto foi configurado e testado num **PC Linux (Ubuntu 24)**; o app é execu
 
 1. Instale as dependências: `pnpm install`
 2. Inicie o servidor de desenvolvimento: `pnpm start`
-3. No iPhone, instale o **Expo Go** e leia o QR code do terminal com a câmera do telefone (PC e telefone tem que estar na mesma rede Wi‑Fi).
+3. No celular, instale o **Expo Go** e leia o QR code do terminal com a câmera do telefone (PC e telefone tem que estar na mesma rede Wi‑Fi).
 
 Instruções detalhadas, pré-requisitos e scripts úteis estão na [versão em inglês](#petmatch-english) abaixo.
 
