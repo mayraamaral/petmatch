@@ -1,0 +1,102 @@
+import { StyleSheet, View, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import LogoSvg from "@/assets/images/logo.svg";
+import Dog1Svg from "@/assets/images/dog-1.svg";
+import { LogoWordmark } from "@/components/ui/logo-wordmark";
+import { Button } from "@/components/ui/button";
+import { tokens } from "@/constants/tokens";
+import { Fonts } from "@/constants/theme";
+
+export default function HomeScreen() {
+  return (
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <LogoWordmark size="sm" />
+        <LogoSvg width={32} height={32} color={tokens.colors.brand.green} />
+      </View>
+
+      {/* Body */}
+      <View style={styles.body}>
+        <View style={styles.card}>
+          <Text style={styles.cardText}>
+            ENCONTRE O SEU NOVO{"\n"}AMIGO DE QUATRO PATAS!
+          </Text>
+          <View style={styles.dogContainer}>
+            <Dog1Svg width={280} height={280} style={styles.dogImage} />
+          </View>
+        </View>
+      </View>
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        <Button
+          label="COMEÇAR"
+          variant="primary"
+          size="md"
+          fullWidth={false}
+          containerStyle={styles.buttonContainer}
+        />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: tokens.colors.white,
+  },
+  header: {
+    backgroundColor: tokens.colors.white,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: tokens.spacing[4],
+    gap: tokens.spacing[2],
+  },
+  body: {
+    flex: 1,
+    backgroundColor: tokens.colors.brand.cream,
+    padding: tokens.spacing[6],
+    justifyContent: "center",
+  },
+  card: {
+    backgroundColor: tokens.colors.brand.green,
+    borderRadius: tokens.radius.xl,
+    paddingTop: tokens.spacing[8],
+    paddingHorizontal: tokens.spacing[4],
+    alignItems: "center",
+    justifyContent: "space-between",
+    flex: 1,
+    maxHeight: 480,
+    overflow: "hidden",
+  },
+  cardText: {
+    fontFamily: Fonts.secondary,
+    fontSize: 24,
+    color: tokens.colors.white,
+    textAlign: "center",
+    lineHeight: 32,
+    marginBottom: tokens.spacing[4],
+  },
+  dogContainer: {
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flex: 1,
+    width: "100%",
+  },
+  dogImage: {
+    marginBottom: -20, // To make it look like it's cut off at the bottom like the image
+  },
+  footer: {
+    backgroundColor: tokens.colors.white,
+    paddingVertical: tokens.spacing[8],
+    paddingHorizontal: tokens.spacing[6],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    paddingHorizontal: tokens.spacing[10],
+  },
+});

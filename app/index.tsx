@@ -1,9 +1,21 @@
-import { StyleSheet, View } from "react-native";
 import LogoSvg from "@/assets/images/logo.svg";
 import { LogoWordmark } from "@/components/ui/logo-wordmark";
 import { tokens } from "@/constants/tokens";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 
 export default function SplashScreen() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace("/home");
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
     <View style={styles.container}>
       <LogoSvg width={120} height={120} color={tokens.colors.brand.green} />
