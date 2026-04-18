@@ -50,6 +50,7 @@ export default function RootLayout() {
         <Stack.Screen name="home" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="signup" options={{ headerShown: false }} />
+        <Stack.Screen name="find-pet" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="dark" />
     </ThemeProvider>

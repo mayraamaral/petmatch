@@ -30,7 +30,7 @@ export const tokens = {
       primary: '#104020',
       green: '#2F9958',
       yellow: '#F8C630',
-      orange: '#EB8816',
+      orange: '#EB8715',
     },
   },
 

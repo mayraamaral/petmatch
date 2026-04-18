@@ -36,6 +36,7 @@ export function LoginScreen() {
   const onSubmit = (data: LoginFormData) => {
     console.log("Form data:", data);
     // Handle login
+    router.push("/find-pet" as any);
   };
 
   return (
