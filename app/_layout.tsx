@@ -13,11 +13,13 @@ import {
 } from '@expo-google-fonts/rubik';
 import { WalterTurncoat_400Regular } from '@expo-google-fonts/walter-turncoat';
 
+import StorybookUIRoot from '../.rnstorybook';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true';
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     RubikRegular: Rubik_400Regular,
@@ -35,6 +37,10 @@ export default function RootLayout() {
 
   if (!loaded) {
     return null;
+  }
+
+  if (isStorybookEnabled) {
+    return <StorybookUIRoot />;
   }
 
   return (

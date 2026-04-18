@@ -165,23 +165,23 @@ const styles = StyleSheet.create({
   },
   primary: {
     backgroundColor: tokens.colors.brand.green,
-    borderRadius: tokens.radius.xl,
+    borderRadius: tokens.radius.md,
   },
   tertiary: {
-    backgroundColor: tokens.colors.gray[200],
-    borderRadius: tokens.radius.xl,
+    backgroundColor: tokens.colors.brand.cream,
+    borderRadius: tokens.radius.md,
   },
   success: {
     backgroundColor: tokens.colors.brand.primary,
-    borderRadius: tokens.radius.xl,
+    borderRadius: tokens.radius.md,
   },
   danger: {
     backgroundColor: tokens.colors.red[400],
-    borderRadius: tokens.radius.xl,
+    borderRadius: tokens.radius.md,
   },
   warning: {
     backgroundColor: tokens.colors.brand.yellow,
-    borderRadius: tokens.radius.xl,
+    borderRadius: tokens.radius.md,
   },
   iconText: {
     backgroundColor: tokens.colors.brand.green,

@@ -91,7 +91,7 @@ export function Card({
 
   return (
     <View style={[styles.base, styles.normalCard, normalSizeStyle, style]}>
-      <View style={styles.mainArea}>{children}</View>
+      <View style={[styles.mainArea, { flex: 1 }]}>{children}</View>
     </View>
   );
 }
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
     height: 320,
   },
   mainArea: {
-    flex: 1,
     backgroundColor: tokens.colors.brand.green,
   },
   infoArea: {
