@@ -26,7 +26,7 @@ export const tokens = {
     },
 
     brand: {
-      cream: '#F0EFEF',
+      background: '#D3D3D3',
       primary: '#104020',
       green: '#2F9958',
       yellow: '#F8C630',

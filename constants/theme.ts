@@ -4,7 +4,7 @@ export const Colors = {
   light: {
     text: tokens.colors.brand.primary,
     background: tokens.colors.white,
-    surface: tokens.colors.brand.cream,
+    surface: tokens.colors.brand.background,
     tint: tokens.colors.brand.primary,
     icon: tokens.colors.gray[500],
     tabIconDefault: tokens.colors.gray[500],
