@@ -64,8 +64,11 @@ jobs:
 
           # Só vamos sincronizar estas labels
           MANAGED_LABELS = {
-              "back-end": "green",
-              "front-end": "blue",
+              "back-end": "blue",
+              "front-end": "pink",
+              "documentation": "green",
+              "enhancement": "orange"
+              
           }
 
           def normalize_label_name(name):
