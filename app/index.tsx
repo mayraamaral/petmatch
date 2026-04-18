@@ -11,7 +11,7 @@ export default function SplashScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace("/home");
-    }, 1000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [router]);
@@ -30,6 +30,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: tokens.spacing[4],
-    backgroundColor: tokens.colors.brand.cream,
+    backgroundColor: tokens.colors.white,
   },
 });

@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radius.md,
   },
   tertiary: {
-    backgroundColor: tokens.colors.brand.cream,
+    backgroundColor: tokens.colors.brand.background,
     borderRadius: tokens.radius.md,
   },
   success: {
