@@ -1,15 +1,26 @@
-import { StyleSheet, View, Text, TextInput, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "expo-router";
+import { Controller, useForm } from "react-hook-form";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { LogoFull } from "@/components/ui/logo-full";
 import { Button } from "@/components/ui/button";
-import { tokens } from "@/constants/tokens";
+import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
+import { tokens } from "@/constants/tokens";
 import { loginSchema, type LoginFormData } from "../schemas/login.schema";
 
 export function LoginScreen() {
+  const router = useRouter();
   const {
     control,
     handleSubmit,
@@ -49,6 +60,7 @@ export function LoginScreen() {
                     <TextInput
                       style={[styles.input, errors.email && styles.inputError]}
                       placeholder="Digite seu e-mail"
+                      placeholderTextColor={tokens.colors.gray[500]}
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
@@ -69,8 +81,12 @@ export function LoginScreen() {
                   name="password"
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={[styles.input, errors.password && styles.inputError]}
+                      style={[
+                        styles.input,
+                        errors.password && styles.inputError,
+                      ]}
                       placeholder="Digite sua senha"
+                      placeholderTextColor={tokens.colors.gray[500]}
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
@@ -79,7 +95,9 @@ export function LoginScreen() {
                   )}
                 />
                 {errors.password && (
-                  <Text style={styles.errorText}>{errors.password.message}</Text>
+                  <Text style={styles.errorText}>
+                    {errors.password.message}
+                  </Text>
                 )}
               </View>
 
@@ -90,6 +108,15 @@ export function LoginScreen() {
                 onPress={handleSubmit(onSubmit)}
                 containerStyle={styles.buttonContainer}
               />
+
+              <Pressable
+                onPress={() => router.push("/signup" as any)}
+                style={styles.linkContainer}
+              >
+                <Text style={styles.linkText}>
+                  Não tem uma conta? Cadastre-se
+                </Text>
+              </Pressable>
             </View>
           </View>
         </ScrollView>
@@ -133,7 +160,7 @@ const styles = StyleSheet.create({
     gap: tokens.spacing[2],
   },
   label: {
-    fontFamily: Fonts.primaryMedium,
+    fontFamily: Fonts.medium,
     fontSize: tokens.fontSize.sm,
     color: tokens.colors.gray[700],
   },
@@ -158,5 +185,15 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: tokens.spacing[4],
+  },
+  linkContainer: {
+    alignItems: "center",
+    marginTop: tokens.spacing[2],
+    paddingVertical: tokens.spacing[2],
+  },
+  linkText: {
+    fontFamily: Fonts.medium,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.colors.brand.primary,
   },
 });
