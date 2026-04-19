@@ -7,7 +7,7 @@ export class UserRegistrationEntity {
   private constructor(private readonly data: SignupFormData) {}
 
   static create(data: SignupFormData): UserRegistrationEntity {
-    // Aqui você pode colocar validações de domínio que o Zod não cobre
+    // Validações de domínio
     return new UserRegistrationEntity(data);
   }
 
@@ -39,27 +39,23 @@ export class UserRegistrationEntity {
     return this.data.role === "abrigo";
   }
 
-  toAdopterProfile(userId: string) {
-    if (!this.isAdopter) throw new Error("Usuário não é adotante");
-    
-    return {
-      user_id: userId,
-      name: this.data.name,
-    };
-  }
-
-  toListerProfile(userId: string) {
-    if (!this.isLister) throw new Error("Usuário não é doador/abrigo");
+  toAuthMetadata(): Record<string, string> {
+    if (this.isAdopter) {
+      return {
+        role: this.role,
+        name: this.data.name ?? "",
+      };
+    }
 
     const listerType: ListerType = this.isIndividual ? "INDIVIDUAL" : "SHELTER";
 
     return {
-      user_id: userId,
+      role: this.role,
       lister_type: listerType,
-      name: this.isIndividual ? this.data.name : null,
-      trade_name: this.isShelter ? this.data.tradeName : null,
-      corporate_name: this.isShelter ? this.data.corporateName : null,
-      cnpj: this.isShelter ? this.data.cnpj : null,
+      name: this.isIndividual ? (this.data.name ?? "") : "",
+      trade_name: this.isShelter ? (this.data.tradeName ?? "") : "",
+      corporate_name: this.isShelter ? (this.data.corporateName ?? "") : "",
+      cnpj: this.isShelter ? (this.data.cnpj ?? "") : "",
     };
   }
 }
