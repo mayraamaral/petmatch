@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     name: Move Trello Card to Completed List
+    timeout-minutes: 3
 
     steps:
       - name: Move related Trello card to Completed List
@@ -68,7 +69,7 @@ jobs:
                   headers=headers or {},
               )
               try:
-                  with urllib.request.urlopen(req) as resp:
+                  with urllib.request.urlopen(req, timeout=20) as resp:
                       raw = resp.read().decode("utf-8")
                       if not raw:
                           return None
@@ -79,6 +80,8 @@ jobs:
               except urllib.error.HTTPError as e:
                   detail = e.read().decode("utf-8", errors="ignore")
                   raise SystemExit(f"HTTP {e.code} error on {method} {url}\n{detail}")
+              except Exception as e:
+                  raise SystemExit(f"Request failed on {method} {url}\n{e}")
 
           def trello_request(method, path, params=None):
               query = {
@@ -162,7 +165,7 @@ jobs:
               return trello_request(
                   "GET",
                   f"/cards/{card_ref}",
-                  {"fields": "id,name,idList,url"},
+                  {"fields": "id,name,idList,url,dueComplete"},
               )
 
           card_ref = extract_trello_card_ref_from_issue_comments()
@@ -178,16 +181,24 @@ jobs:
           card = resolve_card(card_ref)
           card_id = card["id"]
           current_list_id = card.get("idList")
+          is_completed = bool(card.get("dueComplete"))
 
-          if current_list_id == completed_list_id:
-              print(f"Trello card for issue #{issue_number} is already in Completed List.")
-              raise SystemExit(0)
+          if current_list_id != completed_list_id or not is_completed:
+              trello_request(
+                  "PUT",
+                  f"/cards/{card_id}",
+                  {
+                      "idList": completed_list_id,
+                      "dueComplete": "true",
+                  },
+              )
 
-          trello_request(
-              "PUT",
-              f"/cards/{card_id}",
-              {"idList": completed_list_id},
-          )
-
-          print(f"Moved Trello card for issue #{issue_number} to Completed List.")
+              if current_list_id != completed_list_id and not is_completed:
+                  print(f"Moved Trello card for issue #{issue_number} to Completed List and marked it as completed.")
+              elif current_list_id != completed_list_id:
+                  print(f"Moved Trello card for issue #{issue_number} to Completed List.")
+              else:
+                  print(f"Marked Trello card for issue #{issue_number} as completed.")
+          else:
+              print(f"Trello card for issue #{issue_number} is already in Completed List and already completed.")
           PY
