@@ -18,6 +18,7 @@ import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import { signupSchema, type SignupFormData } from "../schemas/signup.schema";
+import { useSignup } from "../hooks/use-signup";
 
 const ROLES = [
   { value: "adotante", label: "Quero adotar" },
@@ -27,6 +28,7 @@ const ROLES = [
 
 export function SignupScreen() {
   const router = useRouter();
+  const { handleSignup, isLoading } = useSignup();
   const {
     control,
     handleSubmit,
@@ -48,11 +50,6 @@ export function SignupScreen() {
     control,
     name: "role",
   });
-
-  const onSubmit = (data: SignupFormData) => {
-    console.log("Signup data:", data);
-    // Handle signup
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -279,11 +276,12 @@ export function SignupScreen() {
                   </View>
 
                   <Button
-                    label="CRIAR CONTA"
+                    label={isLoading ? "CRIANDO CONTA..." : "CRIAR CONTA"}
                     variant="primary"
                     size="md"
-                    onPress={handleSubmit(onSubmit)}
+                    onPress={handleSubmit(handleSignup)}
                     containerStyle={styles.buttonContainer}
+                    disabled={isLoading}
                   />
                 </View>
               )}
