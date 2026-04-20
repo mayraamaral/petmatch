@@ -3,7 +3,8 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
+import { AppState } from 'react-native';
 import 'react-native-reanimated';
 import {
   Rubik_400Regular,
@@ -14,7 +15,10 @@ import {
 import { WalterTurncoat_400Regular } from '@expo-google-fonts/walter-turncoat';
 
 import StorybookUIRoot from '../.rnstorybook';
+import { SplashLoader } from '@/components/ui/splash-loader';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AuthProvider, useAuth } from '@/features/auth/context/auth.context';
+import { supabase } from '@/lib/supabase';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -35,6 +39,20 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        supabase.auth.startAutoRefresh();
+      } else {
+        supabase.auth.stopAutoRefresh();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   if (!loaded) {
     return null;
   }
@@ -45,14 +63,24 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="home" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen name="signup" options={{ headerShown: false }} />
-        <Stack.Screen name="find-pet" options={{ headerShown: false }} />
-      </Stack>
+      <AuthProvider>
+        <AuthGate>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(app)" />
+          </Stack>
+        </AuthGate>
+      </AuthProvider>
       <StatusBar style="dark" />
     </ThemeProvider>
   );
+}
+
+function AuthGate({ children }: { children: ReactNode }) {
+  const { isBootstrapping } = useAuth();
+  if (isBootstrapping) {
+    return <SplashLoader />;
+  }
+  return <>{children}</>;
 }

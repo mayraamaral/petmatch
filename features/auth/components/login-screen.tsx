@@ -17,10 +17,12 @@ import { Button } from "@/components/ui/button";
 import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
+import { useLogin } from "../hooks/use-login";
 import { loginSchema, type LoginFormData } from "../schemas/login.schema";
 
 export function LoginScreen() {
   const router = useRouter();
+  const { handleLogin, isLoading } = useLogin();
   const {
     control,
     handleSubmit,
@@ -32,12 +34,6 @@ export function LoginScreen() {
       password: "",
     },
   });
-
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Form data:", data);
-    // Handle login
-    router.push("/find-pet" as any);
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -103,10 +99,11 @@ export function LoginScreen() {
               </View>
 
               <Button
-                label="ACESSAR"
+                label={isLoading ? "ENTRANDO..." : "ACESSAR"}
                 variant="primary"
                 size="md"
-                onPress={handleSubmit(onSubmit)}
+                onPress={handleSubmit(handleLogin)}
+                disabled={isLoading}
                 containerStyle={styles.buttonContainer}
               />
 

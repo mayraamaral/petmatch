@@ -1,25 +1,36 @@
-import { StyleSheet, View, Text } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+
 import Dog1Svg from "@/assets/images/dog-1.svg";
-import { LogoFull } from "@/components/ui/logo-full";
 import { Button } from "@/components/ui/button";
-import { tokens } from "@/constants/tokens";
+import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
+import { tokens } from "@/constants/tokens";
+import { useAuth } from "@/features/auth/context/auth.context";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { logout } = useAuth();
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-      {/* Header */}
       <View style={styles.headerWrapper}>
         <View style={styles.header}>
           <LogoFull size="sm" />
+          <Pressable
+            onPress={() => {
+              void logout();
+            }}
+            style={styles.logoutButton}
+            accessibilityRole="button"
+            accessibilityLabel="Sair"
+          >
+            <Text style={styles.logoutText}>Sair</Text>
+          </Pressable>
         </View>
       </View>
 
-      {/* Body */}
       <View style={styles.body}>
         <View style={styles.card}>
           <Text style={styles.cardText}>
@@ -31,7 +42,6 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Footer */}
       <View style={styles.footerWrapper}>
         <View style={styles.footer}>
           <Button
@@ -39,7 +49,7 @@ export default function HomeScreen() {
             variant="primary"
             size="md"
             fullWidth={false}
-            onPress={() => router.push("/login" as any)}
+            onPress={() => router.push("/find-pet" as any)}
             containerStyle={styles.buttonContainer}
           />
         </View>
@@ -62,9 +72,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: tokens.spacing[4],
+    paddingHorizontal: tokens.spacing[4],
     gap: tokens.spacing[2],
     borderBottomLeftRadius: tokens.radius.xl,
     borderBottomRightRadius: tokens.radius.xl,
+    position: "relative",
+  },
+  logoutButton: {
+    position: "absolute",
+    right: tokens.spacing[4],
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    paddingHorizontal: tokens.spacing[2],
+  },
+  logoutText: {
+    fontFamily: Fonts.medium,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.colors.brand.primary,
   },
   body: {
     flex: 1,
@@ -98,7 +123,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   dogImage: {
-    marginBottom: -20, // To make it look like it's cut off at the bottom like the image
+    marginBottom: -20,
   },
   footerWrapper: {
     backgroundColor: tokens.colors.brand.background,

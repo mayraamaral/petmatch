@@ -1,0 +1,39 @@
+import { useState } from "react";
+import { Alert } from "react-native";
+
+import { AuthError, type AuthErrorCode } from "../domain/errors/auth.errors";
+import { SupabaseAuthRepository } from "../infrastructure/supabase-auth.repository";
+import type { LoginFormData } from "../schemas/login.schema";
+import { LoginUseCase } from "../use-cases/login.use-case";
+
+const authRepository = new SupabaseAuthRepository();
+const loginUseCase = new LoginUseCase(authRepository);
+
+const UI_MESSAGES: Record<AuthErrorCode, string> = {
+  INVALID_CREDENTIALS: "E-mail ou senha inválidos.",
+  EMAIL_NOT_CONFIRMED: "Confirme seu e-mail antes de entrar.",
+  RATE_LIMITED: "Muitas tentativas. Tente novamente em alguns minutos.",
+  NETWORK: "Sem conexão. Verifique sua internet.",
+  UNKNOWN: "Não foi possível entrar. Tente novamente.",
+};
+
+export function useLogin() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async (data: LoginFormData) => {
+    try {
+      setIsLoading(true);
+      await loginUseCase.execute(data);
+    } catch (error) {
+      const code = error instanceof AuthError ? error.code : "UNKNOWN";
+      Alert.alert("Erro ao entrar", UI_MESSAGES[code]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    handleLogin,
+    isLoading,
+  };
+}
