@@ -24,6 +24,10 @@ export function mapSupabaseAuthError(err: unknown): AuthError {
     return new AuthError("EMAIL_NOT_CONFIRMED");
   }
 
+  if (/invalid|expired/i.test(message) && /otp|token|code/i.test(message)) {
+    return new AuthError("INVALID_CONFIRMATION_CODE");
+  }
+
   if (status === 400 || status === 401 || /invalid login credentials|user not found/i.test(message)) {
     return new AuthError("INVALID_CREDENTIALS");
   }

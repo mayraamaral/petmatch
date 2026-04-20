@@ -17,10 +17,10 @@ export function useSignup() {
     try {
       setIsLoading(true);
       await signupUseCase.execute(data);
-      
-      Alert.alert("Sucesso", "Conta criada com sucesso!", [
-        { text: "OK", onPress: () => router.replace("/home" as any) },
-      ]);
+      router.replace({
+        pathname: "/confirm-email",
+        params: { email: data.email.trim().toLowerCase() },
+      } as any);
     } catch (error: any) {
       console.error("Signup error:", error);
       Alert.alert("Erro ao criar conta", error.message || "Ocorreu um erro inesperado.");

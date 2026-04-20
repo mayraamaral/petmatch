@@ -1,5 +1,6 @@
 export type AuthErrorCode =
   | "INVALID_CREDENTIALS"
+  | "INVALID_CONFIRMATION_CODE"
   | "EMAIL_NOT_CONFIRMED"
   | "RATE_LIMITED"
   | "NETWORK"

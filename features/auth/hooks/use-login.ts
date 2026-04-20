@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Alert } from "react-native";
+import { useRouter } from "expo-router";
 
 import { AuthError, type AuthErrorCode } from "../domain/errors/auth.errors";
 import { SupabaseAuthRepository } from "../infrastructure/supabase-auth.repository";
@@ -11,6 +12,7 @@ const loginUseCase = new LoginUseCase(authRepository);
 
 const UI_MESSAGES: Record<AuthErrorCode, string> = {
   INVALID_CREDENTIALS: "E-mail ou senha inválidos.",
+  INVALID_CONFIRMATION_CODE: "Código de confirmação inválido.",
   EMAIL_NOT_CONFIRMED: "Confirme seu e-mail antes de entrar.",
   RATE_LIMITED: "Muitas tentativas. Tente novamente em alguns minutos.",
   NETWORK: "Sem conexão. Verifique sua internet.",
@@ -19,6 +21,7 @@ const UI_MESSAGES: Record<AuthErrorCode, string> = {
 
 export function useLogin() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async (data: LoginFormData) => {
     try {
@@ -26,6 +29,15 @@ export function useLogin() {
       await loginUseCase.execute(data);
     } catch (error) {
       const code = error instanceof AuthError ? error.code : "UNKNOWN";
+
+      if (code === "EMAIL_NOT_CONFIRMED") {
+        router.push({
+          pathname: "/confirm-email",
+          params: { email: data.email.trim().toLowerCase() },
+        } as any);
+        return;
+      }
+
       Alert.alert("Erro ao entrar", UI_MESSAGES[code]);
     } finally {
       setIsLoading(false);

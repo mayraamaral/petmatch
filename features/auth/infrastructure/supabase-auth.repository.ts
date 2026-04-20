@@ -31,6 +31,25 @@ export class SupabaseAuthRepository implements AuthRepository {
     if (!data.user) throw new AuthError("INVALID_CREDENTIALS");
   }
 
+  async confirmEmail(email: string, code: string): Promise<void> {
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type: "signup",
+    });
+
+    if (error) throw mapSupabaseAuthError(error);
+  }
+
+  async resendConfirmationEmail(email: string): Promise<void> {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+    });
+
+    if (error) throw mapSupabaseAuthError(error);
+  }
+
   async logout(): Promise<void> {
     const { error } = await supabase.auth.signOut();
     if (error) throw mapSupabaseAuthError(error);
