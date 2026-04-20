@@ -1,0 +1,25 @@
+# 1.0.0 (2026-04-20)
+
+
+### Features
+
+* adiciona action para adicionar etiqueta em card no trello quando for adicionada label em uma issue ([3e9e791](https://github.com/mayraamaral/petmatch/commit/3e9e791434a4d85c6ebc460bcf549073c4579e46))
+* adiciona action para comentar link de pr no card do trello quando um pr for criado no github ([8fd1ab1](https://github.com/mayraamaral/petmatch/commit/8fd1ab17a42d0cc523470809f2fa91cbab581728))
+* adiciona action para editar card no trello automaticamente a partir da edição de uma issue ([d0eea08](https://github.com/mayraamaral/petmatch/commit/d0eea088a1e09eb29fd057ef09e18944a1049222))
+* adiciona action para enviar comentários da issue para o card ([a1c46f3](https://github.com/mayraamaral/petmatch/commit/a1c46f3fbacc89966528cef0c32e47feb99a123a))
+* adiciona action para mover card no trello automaticamente para coluna finalizado quando o pr for mergeado ([d71fe16](https://github.com/mayraamaral/petmatch/commit/d71fe162399b673f26e80ee4756089cfa32f4a51))
+* adiciona action para mover card para finalizado quando isso for fechada ([9b88034](https://github.com/mayraamaral/petmatch/commit/9b880348d7fa7a5371d4cd12fcc0c97ee5db5aae))
+* adiciona card, botões, logomarca e storybook ([e4e106f](https://github.com/mayraamaral/petmatch/commit/e4e106f1f3775b39cc13387525499247d4ce0e29))
+* adiciona componentes e estilo base ([5049a33](https://github.com/mayraamaral/petmatch/commit/5049a335cb59ce74328718206b296253d1fd81a4))
+* adiciona estrutura inicial ([0890916](https://github.com/mayraamaral/petmatch/commit/08909163c79fed8dc2b6755affd72a6a93c1b725))
+* adiciona estrutura inicial do supabase ([924f5f4](https://github.com/mayraamaral/petmatch/commit/924f5f41ba4110e63aedbe2ec7238338d1d0381a))
+* adiciona função de confirmar e-mail para sign up e login com opção de reenvio de e-mail ([bc77ae6](https://github.com/mayraamaral/petmatch/commit/bc77ae6f89fbc41f1246319b4f33d7f079c256eb))
+* adiciona lógica login e logout ([b1e0256](https://github.com/mayraamaral/petmatch/commit/b1e025683dd7870d419d11b0136492d3e7f0acbb))
+* adiciona mais labels na action de labels ([68d00b8](https://github.com/mayraamaral/petmatch/commit/68d00b858daabc27ef1d0562b2bd0a626fdb3e55))
+* adiciona readme ([eb3ccd0](https://github.com/mayraamaral/petmatch/commit/eb3ccd0cbccc1012298fc4ce07af9e58b03a5304))
+* adiciona tela de find pet ([ff56c3f](https://github.com/mayraamaral/petmatch/commit/ff56c3fe644bda5a8a1dc6e16326276d4d64c4e5))
+* adiciona tela de login ([f35b389](https://github.com/mayraamaral/petmatch/commit/f35b38924a54505b3b50038fb60bf9d95cbda96b))
+* adiciona tela de signup ([515581d](https://github.com/mayraamaral/petmatch/commit/515581d4c532e99a5ae3f359c2e3286daf638ef7))
+* adiciona tela de splash screen ([87d7cee](https://github.com/mayraamaral/petmatch/commit/87d7cee750d98e137a8f6d8784fe6e33c9f58d1d))
+* adiciona tela inicial ([744edf0](https://github.com/mayraamaral/petmatch/commit/744edf08c47bf6a6f7c81d092c1958153f124e0d))
+* adiciona workflow para criar card no Trello após criação de issue ([73419b0](https://github.com/mayraamaral/petmatch/commit/73419b0de9c1f468938fa37b877da9ac863274fd))
