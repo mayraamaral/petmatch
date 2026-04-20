@@ -1,7 +1,7 @@
 {
   "name": "petmatch",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "start": "expo start",
     "storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start -c",
