@@ -1,25 +1,24 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+
 import Dog1Svg from "@/assets/images/dog-1.svg";
-import { LogoFull } from "@/components/ui/logo-full";
 import { Button } from "@/components/ui/button";
-import { tokens } from "@/constants/tokens";
+import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
+import { tokens } from "@/constants/tokens";
 
 export default function HomeScreen() {
   const router = useRouter();
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-      {/* Header */}
       <View style={styles.headerWrapper}>
         <View style={styles.header}>
           <LogoFull size="sm" />
         </View>
       </View>
 
-      {/* Body */}
       <View style={styles.body}>
         <View style={styles.card}>
           <Text style={styles.cardText}>
@@ -31,7 +30,6 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Footer */}
       <View style={styles.footerWrapper}>
         <View style={styles.footer}>
           <Button
@@ -98,7 +96,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   dogImage: {
-    marginBottom: -20, // To make it look like it's cut off at the bottom like the image
+    marginBottom: -20,
   },
   footerWrapper: {
     backgroundColor: tokens.colors.brand.background,

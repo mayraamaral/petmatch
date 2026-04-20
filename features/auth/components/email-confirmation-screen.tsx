@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -17,21 +17,26 @@ import { Button } from "@/components/ui/button";
 import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
-import { useLogin } from "../hooks/use-login";
-import { loginSchema, type LoginFormData } from "../schemas/login.schema";
+import { useEmailConfirmation } from "../hooks/use-email-confirmation";
+import {
+  emailConfirmationSchema,
+  type EmailConfirmationFormData,
+} from "../schemas/email-confirmation.schema";
 
-export function LoginScreen() {
+export function EmailConfirmationScreen() {
   const router = useRouter();
-  const { handleLogin, isLoading } = useLogin();
+  const params = useLocalSearchParams<{ email?: string }>();
+  const email = typeof params.email === "string" ? params.email : "";
+  const { handleConfirmEmail, handleResendEmail, isLoading, isResending } =
+    useEmailConfirmation(email);
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<EmailConfirmationFormData>({
+    resolver: zodResolver(emailConfirmationSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      code: "",
     },
   });
 
@@ -48,72 +53,58 @@ export function LoginScreen() {
             </View>
 
             <View style={styles.formContainer}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>E-mail</Text>
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                      style={[styles.input, errors.email && styles.inputError]}
-                      placeholder="Digite seu e-mail"
-                      placeholderTextColor={tokens.colors.gray[500]}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                    />
-                  )}
-                />
-                {errors.email && (
-                  <Text style={styles.errorText}>{errors.email.message}</Text>
-                )}
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>Confirme seu e-mail</Text>
+                <Text style={styles.description}>
+                  Digite o código de 6 dígitos enviado para {email || "seu e-mail"}.
+                </Text>
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Senha</Text>
+                <Text style={styles.label}>Código de confirmação</Text>
                 <Controller
                   control={control}
-                  name="password"
+                  name="code"
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={[
-                        styles.input,
-                        errors.password && styles.inputError,
-                      ]}
-                      placeholder="Digite sua senha"
+                      style={[styles.input, errors.code && styles.inputError]}
+                      placeholder="000000"
                       placeholderTextColor={tokens.colors.gray[500]}
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
-                      secureTextEntry
+                      keyboardType="number-pad"
+                      maxLength={6}
+                      textAlign="center"
                     />
                   )}
                 />
-                {errors.password && (
-                  <Text style={styles.errorText}>
-                    {errors.password.message}
-                  </Text>
-                )}
+                {errors.code && <Text style={styles.errorText}>{errors.code.message}</Text>}
               </View>
 
               <Button
-                label={isLoading ? "ENTRANDO..." : "ACESSAR"}
+                label={isLoading ? "CONFIRMANDO..." : "CONFIRMAR E-MAIL"}
                 variant="primary"
                 size="md"
-                onPress={handleSubmit(handleLogin)}
-                disabled={isLoading}
+                onPress={handleSubmit(handleConfirmEmail)}
+                disabled={isLoading || !email}
                 containerStyle={styles.buttonContainer}
               />
 
               <Pressable
-                onPress={() => router.push("/signup" as any)}
+                onPress={() => {
+                  void handleResendEmail();
+                }}
                 style={styles.linkContainer}
+                disabled={isResending || !email}
               >
                 <Text style={styles.linkText}>
-                  Não tem uma conta? Cadastre-se
+                  {isResending ? "Reenviando..." : "Não recebeu o e-mail? Reenviar código"}
                 </Text>
+              </Pressable>
+
+              <Pressable onPress={() => router.replace("/login")} style={styles.linkContainer}>
+                <Text style={styles.linkText}>Voltar para login</Text>
               </Pressable>
             </View>
           </View>
@@ -154,6 +145,22 @@ const styles = StyleSheet.create({
   formContainer: {
     gap: tokens.spacing[4],
   },
+  textContainer: {
+    gap: tokens.spacing[2],
+  },
+  title: {
+    fontFamily: Fonts.bold,
+    fontSize: tokens.fontSize.xl,
+    color: tokens.colors.gray[900],
+    textAlign: "center",
+  },
+  description: {
+    fontFamily: Fonts.primary,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.colors.gray[700],
+    textAlign: "center",
+    lineHeight: tokens.lineHeight.sm,
+  },
   inputGroup: {
     gap: tokens.spacing[2],
   },
@@ -172,6 +179,7 @@ const styles = StyleSheet.create({
     fontSize: tokens.fontSize.base,
     color: tokens.colors.gray[900],
     backgroundColor: tokens.colors.white,
+    letterSpacing: 6,
   },
   inputError: {
     borderColor: tokens.colors.red[500],
@@ -182,7 +190,7 @@ const styles = StyleSheet.create({
     color: tokens.colors.red[500],
   },
   buttonContainer: {
-    marginTop: tokens.spacing[4],
+    marginTop: tokens.spacing[2],
   },
   linkContainer: {
     alignItems: "center",

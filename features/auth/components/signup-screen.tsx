@@ -147,6 +147,7 @@ export function SignupScreen() {
                             <TextInput
                               style={[
                                 styles.input,
+                                styles.noLetterSpacing,
                                 errors.tradeName && styles.inputError,
                               ]}
                               placeholder="Digite o nome fantasia"
@@ -362,6 +363,9 @@ const styles = StyleSheet.create({
     fontSize: tokens.fontSize.base,
     color: tokens.colors.gray[900],
     backgroundColor: tokens.colors.white,
+  },
+  noLetterSpacing: {
+    letterSpacing: 0,
   },
   inputError: {
     borderColor: tokens.colors.red[500],

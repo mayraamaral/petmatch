@@ -7,9 +7,11 @@ import Dog1Svg from "@/assets/images/dog-1.svg";
 import { Button } from "@/components/ui/button";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
+import { useAuth } from "@/features/auth/context/auth.context";
 
 export function FindPetScreen() {
   const router = useRouter();
+  const { logout } = useAuth();
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -23,7 +25,16 @@ export function FindPetScreen() {
           />
         </Pressable>
         <Text style={styles.headerTitle}>Encontre seu pet</Text>
-        <View style={styles.headerRightSpacer} />
+        <Pressable
+          onPress={() => {
+            void logout();
+          }}
+          style={styles.logoutButton}
+          accessibilityRole="button"
+          accessibilityLabel="Sair"
+        >
+          <Text style={styles.logoutText}>Sair</Text>
+        </Pressable>
       </View>
 
       {/* Main Content */}
@@ -87,8 +98,16 @@ const styles = StyleSheet.create({
     fontSize: tokens.fontSize["2xl"],
     color: tokens.colors.brand.primary,
   },
-  headerRightSpacer: {
-    width: 28 + tokens.spacing[2] * 2, // Same width as back button to keep title centered
+  logoutButton: {
+    minWidth: 28 + tokens.spacing[2] * 2,
+    alignItems: "flex-end",
+    justifyContent: "center",
+    paddingHorizontal: tokens.spacing[2],
+  },
+  logoutText: {
+    fontFamily: Fonts.medium,
+    fontSize: tokens.fontSize.sm,
+    color: tokens.colors.brand.primary,
   },
   content: {
     flex: 1,
