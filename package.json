@@ -1,7 +1,7 @@
 {
   "name": "petmatch",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "start": "expo start",
     "storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start -c",
@@ -48,6 +48,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "@storybook/addon-ondevice-actions": "^10.3.1",
     "@storybook/addon-ondevice-backgrounds": "^10.3.1",
     "@storybook/addon-ondevice-controls": "^10.3.1",
