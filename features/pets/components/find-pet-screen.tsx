@@ -1,6 +1,12 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Dog1Svg from "@/assets/images/dog-1.svg";
@@ -9,9 +15,13 @@ import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import { useAuth } from "@/features/auth/context/auth.context";
 
+const ANIMAL_CARD_SCREEN_RATIO = 0.9;
+
 export function FindPetScreen() {
   const router = useRouter();
   const { logout } = useAuth();
+  const { width } = useWindowDimensions();
+  const animalCardSize = Math.round(width * ANIMAL_CARD_SCREEN_RATIO);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -37,14 +47,26 @@ export function FindPetScreen() {
         </Pressable>
       </View>
 
-      {/* Main Content */}
       <View style={styles.content}>
-        <View style={styles.card}>
-          <View style={styles.dogContainer}>
-            <Dog1Svg width={320} height={320} style={styles.dogImage} />
+        <View
+          style={[
+            styles.card,
+            { width: animalCardSize, height: animalCardSize },
+          ]}
+        >
+          <View
+            style={[
+              styles.dogContainer,
+              { width: animalCardSize, height: animalCardSize },
+            ]}
+          >
+            <Dog1Svg
+              width={animalCardSize}
+              height={animalCardSize}
+              preserveAspectRatio="none"
+            />
           </View>
 
-          {/* Name Badge */}
           <View style={styles.badgeContainer}>
             <Text style={styles.badgeText}>BULMA, 4 ANOS</Text>
           </View>
@@ -112,13 +134,11 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: tokens.colors.brand.background,
-    paddingHorizontal: tokens.spacing[6],
-    paddingVertical: tokens.spacing[10], // Add more vertical padding to shrink the card
-    justifyContent: "center", // Changed back to center to move it lower
+    paddingVertical: tokens.spacing[10],
+    alignItems: "center",
+    justifyContent: "center",
   },
   card: {
-    width: "100%",
-    aspectRatio: 1, // Makes it a perfect square like the image
     backgroundColor: tokens.colors.brand.green,
     borderRadius: tokens.radius.xl,
     overflow: "hidden",
@@ -129,11 +149,6 @@ const styles = StyleSheet.create({
   dogContainer: {
     alignItems: "center",
     justifyContent: "center",
-    flex: 1,
-    width: "100%",
-  },
-  dogImage: {
-    // Adjust if needed to match the mockup
   },
   badgeContainer: {
     position: "absolute",
@@ -153,7 +168,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingVertical: tokens.spacing[12], // Increase footer height to match mockup
+    paddingVertical: tokens.spacing[12],
     paddingHorizontal: tokens.spacing[6],
     backgroundColor: tokens.colors.white,
   },
