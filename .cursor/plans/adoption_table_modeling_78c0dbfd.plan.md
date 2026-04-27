@@ -35,7 +35,7 @@ Implement a dedicated `public.adoptions` model to represent the adoption process
 - Canonical process tracking lives in `adoptions` (not in `animals`).
 - `animals` should only indicate if the pet is available or not.
 - One animal can have multiple adoption records over time (unrestricted history).
-- Context comes from existing schema in [`/home/mayra/Documents/projects/petmatch/supabase/migrations/20260426000000_animals_table.sql`](file:///home/mayra/Documents/projects/petmatch/supabase/migrations/20260426000000_animals_table.sql) and plan style in [`/home/mayra/Documents/projects/petmatch/.cursor/plans/animal_table_modeling_19dfb9c2.plan.md`](file:///home/mayra/Documents/projects/petmatch/.cursor/plans/animal_table_modeling_19dfb9c2.plan.md).
+- Context comes from existing schema in [`../../supabase/migrations/20260426000000_animals_table.sql`](../../supabase/migrations/20260426000000_animals_table.sql) and plan style in [`animal_table_modeling_19dfb9c2.plan.md`](animal_table_modeling_19dfb9c2.plan.md).
 
 ## Availability boundary
 
