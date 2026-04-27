@@ -4,5 +4,5 @@ import { useAuth } from "@/features/auth/context/auth.context";
 
 export default function Index() {
   const { session } = useAuth();
-  return <Redirect href={session ? "/find-pet" : "/home"} />;
+  return <Redirect href={session ? "/(app)" : "/home"} />;
 }

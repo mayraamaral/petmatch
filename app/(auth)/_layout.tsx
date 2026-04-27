@@ -6,7 +6,7 @@ export default function AuthLayout() {
   const { session } = useAuth();
 
   if (session) {
-    return <Redirect href="/find-pet" />;
+    return <Redirect href="/(app)" />;
   }
 
   return (
