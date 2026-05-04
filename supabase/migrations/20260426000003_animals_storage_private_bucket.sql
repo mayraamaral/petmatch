@@ -1,6 +1,10 @@
 -- Private bucket policies for animal photos
 -- Files are stored as: {auth.uid()}/{generated-file-name}
 
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('animals', 'animals', false) 
+ON CONFLICT (id) DO NOTHING;
+
 DROP POLICY IF EXISTS "animals_upload_own_folder" ON storage.objects;
 CREATE POLICY "animals_upload_own_folder"
   ON storage.objects

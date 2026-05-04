@@ -23,7 +23,8 @@ export const createAnimalSchema = z.object({
   photoUri: z.string().trim().min(1, "Foto do pet é obrigatória"),
   name: z.string().trim().min(2, "Nome do pet é obrigatório"),
   species: z.enum(["DOG", "CAT", "BIRD", "RABBIT", "OTHER"], {
-    error: "Selecione o tipo do animal",
+    required_error: "Selecione o tipo do animal",
+    invalid_type_error: "Selecione o tipo do animal",
   }),
   birthDate: z
     .string()
@@ -42,10 +43,12 @@ export const createAnimalSchema = z.object({
   behaviorNotes: z.string().trim().optional(),
   interestingFacts: z.string().trim().optional(),
   size: z.enum(["SMALL", "MEDIUM", "LARGE"], {
-    error: "Selecione o porte do animal",
+    required_error: "Selecione o porte do animal",
+    invalid_type_error: "Selecione o porte do animal",
   }),
   sex: z.enum(["MALE", "FEMALE", "UNKNOWN"], {
-    error: "Selecione o sexo do animal",
+    required_error: "Selecione o sexo do animal",
+    invalid_type_error: "Selecione o sexo do animal",
   }),
   isNeutered: z.boolean(),
   isVaccinated: z.boolean(),

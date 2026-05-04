@@ -32,7 +32,13 @@ export class CreateAnimalUseCase {
     } catch (error) {
       try {
         await this.animalPhotoRepository.deletePhoto(uploadedPhoto.storagePath);
-      } catch {}
+      } catch (cleanupError) {
+        console.error("Falha ao remover foto após erro ao cadastrar pet.", {
+          storagePath: uploadedPhoto.storagePath,
+          cleanupError,
+          originalError: error,
+        });
+      }
       throw error;
     }
   }
