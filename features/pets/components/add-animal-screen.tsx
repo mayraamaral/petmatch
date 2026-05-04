@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/button";
 import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
-import { useAuth } from "@/features/auth/context/auth.context";
 import {
   AnimalPhotoPickerError,
   useAnimalPhotoPicker,
@@ -57,7 +56,6 @@ const SEX_OPTIONS = [
 
 export function AddAnimalScreen() {
   const router = useRouter();
-  const { logout } = useAuth();
   const { handleCreateAnimal, isLoading } = useCreateAnimal();
   const { isPickingPhoto, pickPhotoFromLibrary } = useAnimalPhotoPicker();
   const { isResolvingLocation, resolveCurrentLocation } = useDeviceLocation();
@@ -238,16 +236,6 @@ export function AddAnimalScreen() {
           <View style={styles.card}>
             <View style={styles.logoContainer}>
               <LogoFull size="sm" />
-              <Pressable
-                onPress={() => {
-                  void logout();
-                }}
-                style={styles.logoutButton}
-                accessibilityRole="button"
-                accessibilityLabel="Sair"
-              >
-                <Text style={styles.logoutText}>Sair</Text>
-              </Pressable>
               <Text style={styles.title}>Cadastrar pet</Text>
             </View>
 
@@ -714,18 +702,6 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing[5],
     marginTop: tokens.spacing[2],
     position: "relative",
-  },
-  logoutButton: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    paddingHorizontal: tokens.spacing[2],
-    paddingVertical: tokens.spacing[1],
-  },
-  logoutText: {
-    fontFamily: Fonts.medium,
-    fontSize: tokens.fontSize.sm,
-    color: tokens.colors.brand.primary,
   },
   title: {
     fontFamily: Fonts.bold,
