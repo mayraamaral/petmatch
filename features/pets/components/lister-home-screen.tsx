@@ -1,5 +1,12 @@
 import { Redirect, useRouter } from "expo-router";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import AddAnimalSvg from "@/assets/images/add-animal.svg";
@@ -7,12 +14,14 @@ import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import { useAuth } from "@/features/auth/context/auth.context";
+import type { ListerAnimal } from "../domain/entities/lister-animal.entity";
 import { useListerHome } from "../hooks/use-lister-home";
+import { ListerAnimalCard } from "./lister-animal-card";
 
 export function ListerHomeScreen() {
   const router = useRouter();
   const { logout } = useAuth();
-  const { isLoading, isLister, hasAnimals } = useListerHome();
+  const { isLoading, isLister, hasAnimals, animals } = useListerHome();
 
   if (isLoading) {
     return (
@@ -25,6 +34,10 @@ export function ListerHomeScreen() {
   if (!isLister) {
     return <Redirect href="/find-pet" />;
   }
+
+  const renderAnimalCard = ({ item }: { item: ListerAnimal }) => (
+    <ListerAnimalCard animal={item} />
+  );
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -46,20 +59,26 @@ export function ListerHomeScreen() {
 
       <View style={styles.content}>
         {hasAnimals ? (
-          <View style={styles.placeholderCard}>
-            <Text style={styles.placeholderTitle}>Você já tem pets cadastrados</Text>
-            <Text style={styles.placeholderSubtitle}>
-              A listagem de pets será implementada no próximo passo.
-            </Text>
-            <Pressable
-              onPress={() => router.push("/add-animal" as any)}
-              style={styles.secondaryButton}
-            >
-              <Text style={styles.secondaryButtonText}>Adicionar outro pet</Text>
-            </Pressable>
-          </View>
+          <FlatList
+            data={animals}
+            keyExtractor={(item) => item.id}
+            renderItem={renderAnimalCard}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <View style={styles.listHeader}>
+                <Text style={styles.listTitle}>Meus pets cadastrados</Text>
+                <Pressable
+                  onPress={() => router.push("/add-animal" as any)}
+                  style={styles.headerAddButton}
+                >
+                  <Text style={styles.headerAddButtonText}>+ Novo pet</Text>
+                </Pressable>
+              </View>
+            }
+          />
         ) : (
-          <>
+          <View style={styles.emptyStateContainer}>
             <View style={styles.emptyStateTextWrapper}>
               <Text style={styles.title}>Boas vindas!</Text>
               <Text style={styles.subtitle}>
@@ -78,7 +97,7 @@ export function ListerHomeScreen() {
             </Pressable>
 
             <Text style={styles.footerHint}>Vamos adicionar algum pet!</Text>
-          </>
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -122,14 +141,17 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: tokens.colors.brand.background,
-    paddingHorizontal: tokens.spacing[5],
-    paddingTop: tokens.spacing[8],
+  },
+  emptyStateContainer: {
+    flex: 1,
     alignItems: "center",
   },
   emptyStateTextWrapper: {
     alignItems: "center",
     gap: tokens.spacing[2],
     marginBottom: tokens.spacing[6],
+    paddingHorizontal: tokens.spacing[5],
+    paddingTop: tokens.spacing[8],
   },
   title: {
     fontFamily: Fonts.bold,
@@ -145,7 +167,7 @@ const styles = StyleSheet.create({
     maxWidth: 320,
   },
   addCard: {
-    width: "100%",
+    width: "85%",
     backgroundColor: tokens.colors.white,
     borderRadius: tokens.radius.lg,
     paddingVertical: tokens.spacing[6],
@@ -166,37 +188,33 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.bold,
     fontSize: tokens.fontSize.xl,
     color: tokens.colors.gray[500],
+    textAlign: "center",
   },
-  placeholderCard: {
-    width: "100%",
-    backgroundColor: tokens.colors.white,
-    borderRadius: tokens.radius.lg,
-    padding: tokens.spacing[6],
+  listContainer: {
+    padding: tokens.spacing[5],
     gap: tokens.spacing[4],
   },
-  placeholderTitle: {
+  listHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: tokens.spacing[2],
+  },
+  listTitle: {
     fontFamily: Fonts.bold,
     fontSize: tokens.fontSize.xl,
     color: tokens.colors.brand.primary,
   },
-  placeholderSubtitle: {
-    fontFamily: Fonts.primary,
-    fontSize: tokens.fontSize.base,
-    color: tokens.colors.gray[700],
-    lineHeight: tokens.lineHeight.base,
-  },
-  secondaryButton: {
-    borderRadius: tokens.radius.md,
+  headerAddButton: {
     backgroundColor: tokens.colors.brand.green,
-    minHeight: 52,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: tokens.spacing[4],
+    paddingHorizontal: tokens.spacing[3],
+    paddingVertical: tokens.spacing[2],
+    borderRadius: tokens.radius.full,
   },
-  secondaryButtonText: {
+  headerAddButtonText: {
     fontFamily: Fonts.bold,
+    fontSize: tokens.fontSize.xs,
     color: tokens.colors.white,
-    fontSize: tokens.fontSize.base,
     textTransform: "uppercase",
   },
 });

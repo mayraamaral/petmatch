@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import type { AnimalRepository } from "../domain/repositories/animal.repository";
 import type { AnimalRegistrationEntity } from "../domain/entities/animal-registration.entity";
 import type { UserRole } from "../domain/entities/current-user.entity";
+import type { ListerAnimal } from "../domain/entities/lister-animal.entity";
 
 export class SupabaseAnimalRepository implements AnimalRepository {
   async getListerContextByUserId(userId: string): Promise<{
@@ -77,6 +78,61 @@ export class SupabaseAnimalRepository implements AnimalRepository {
         
       if (photosError) throw photosError;
     }
+  }
+
+  async getAnimalsForLister(listerProfileId: string): Promise<ListerAnimal[]> {
+    const { data, error } = await supabase
+      .from("animals")
+      .select(`
+        id,
+        name,
+        species,
+        sex,
+        size,
+        birth_date,
+        city,
+        state,
+        adoption_status,
+        animal_photos (
+          photo_url
+        )
+      `)
+      .eq("lister_profile_id", listerProfileId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const animals = await Promise.all((data || []).map(async (row: any) => {
+      // Sort photos by display_order if it was fetched, but here we just take the first one
+      const photos = row.animal_photos || [];
+      const photoPath = photos.length > 0 ? photos[0].photo_url : null;
+      let photoUrl = null;
+
+      if (photoPath) {
+        const { data: urlData } = await supabase.storage
+          .from(process.env.EXPO_PUBLIC_SUPABASE_ANIMALS_BUCKET || "animals")
+          .createSignedUrl(photoPath, 60 * 60); // 1 hour
+        
+        if (urlData?.signedUrl) {
+          photoUrl = urlData.signedUrl;
+        }
+      }
+
+      return {
+        id: row.id,
+        name: row.name,
+        species: row.species,
+        sex: row.sex,
+        size: row.size,
+        birthDate: row.birth_date,
+        city: row.city,
+        state: row.state,
+        adoptionStatus: row.adoption_status,
+        photoUrl,
+      };
+    }));
+
+    return animals;
   }
 
   async hasAnimalsForLister(listerProfileId: string): Promise<boolean> {
