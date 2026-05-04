@@ -1,8 +1,10 @@
 import { supabase } from "@/lib/supabase";
+import { extractStoragePath } from "../utils/extract-storage-path";
 import type { AnimalRepository } from "../domain/repositories/animal.repository";
 import type { AnimalRegistrationEntity } from "../domain/entities/animal-registration.entity";
 import type { UserRole } from "../domain/entities/current-user.entity";
 import type { ListerAnimal } from "../domain/entities/lister-animal.entity";
+import type { AdopterAnimal } from "../domain/entities/adopter-animal.entity";
 
 export class SupabaseAnimalRepository implements AnimalRepository {
   async getListerContextByUserId(userId: string): Promise<{
@@ -109,9 +111,11 @@ export class SupabaseAnimalRepository implements AnimalRepository {
       let photoUrl = null;
 
       if (photoPath) {
+        const storagePath = extractStoragePath(photoPath);
+
         const { data: urlData } = await supabase.storage
           .from(process.env.EXPO_PUBLIC_SUPABASE_ANIMALS_BUCKET || "animals")
-          .createSignedUrl(photoPath, 60 * 60); // 1 hour
+          .createSignedUrl(storagePath, 60 * 60); // 1 hour
         
         if (urlData?.signedUrl) {
           photoUrl = urlData.signedUrl;
@@ -143,5 +147,48 @@ export class SupabaseAnimalRepository implements AnimalRepository {
 
     if (error) throw error;
     return (count ?? 0) > 0;
+  }
+
+  async getNearbyAnimals(lat: number, lng: number, radiusKm: number): Promise<AdopterAnimal[]> {
+    const { data, error } = await supabase.rpc("get_nearby_animals", {
+      user_lat: lat,
+      user_lon: lng,
+      radius_km: radiusKm,
+    });
+
+    if (error) throw error;
+
+    const animals = await Promise.all(
+      (data || []).map(async (row: any) => {
+        let photoUrl = null;
+
+        if (row.photo_url) {
+          const storagePath = extractStoragePath(row.photo_url);
+
+          const { data: urlData } = await supabase.storage
+            .from(process.env.EXPO_PUBLIC_SUPABASE_ANIMALS_BUCKET || "animals")
+            .createSignedUrl(storagePath, 60 * 60); // 1 hour
+
+          if (urlData?.signedUrl) {
+            photoUrl = urlData.signedUrl;
+          }
+        }
+
+        return {
+          id: row.id,
+          name: row.name,
+          species: row.species,
+          sex: row.sex,
+          size: row.size,
+          birthDate: row.birth_date,
+          city: row.city,
+          state: row.state,
+          distanceKm: row.distance_km,
+          photoUrl,
+        };
+      })
+    );
+
+    return animals;
   }
 }

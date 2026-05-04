@@ -1,27 +1,56 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Image,
   Pressable,
   StyleSheet,
   Text,
   useWindowDimensions,
   View,
 } from "react-native";
+import { SwipeableCard, SwipeableCardRef } from "./swipeable-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Dog1Svg from "@/assets/images/dog-1.svg";
 import { Button } from "@/components/ui/button";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import { useAuth } from "@/features/auth/context/auth.context";
+import { useFindPets } from "../hooks/use-find-pets";
+import { formatPetAgeLabel } from "../utils/format-pet-age-label";
 
 const ANIMAL_CARD_SCREEN_RATIO = 0.9;
+const SWIPE_DURATION_MS = 320;
+const SWIPE_ROTATION_DEG = 14;
 
 export function FindPetScreen() {
   const router = useRouter();
   const { logout } = useAuth();
   const { width } = useWindowDimensions();
   const animalCardSize = Math.round(width * ANIMAL_CARD_SCREEN_RATIO);
+  const swipeDistance = Math.max(width, animalCardSize) * 1.35;
+
+  const { isLoading, error, currentAnimal, handleAccept, handleReject, retry } =
+    useFindPets();
+
+  const cardRef = useRef<SwipeableCardRef>(null);
+  const [isPhotoLoading, setIsPhotoLoading] = useState(false);
+  const handleAcceptRef = useRef(handleAccept);
+  const handleRejectRef = useRef(handleReject);
+
+  handleAcceptRef.current = handleAccept;
+  handleRejectRef.current = handleReject;
+
+  useLayoutEffect(() => {
+    if (!currentAnimal) {
+      setIsPhotoLoading(false);
+      return;
+    }
+    setIsPhotoLoading(Boolean(currentAnimal.photoUrl));
+  }, [currentAnimal]);
+
+  const actionsDisabled = isLoading || !currentAnimal;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -48,29 +77,70 @@ export function FindPetScreen() {
       </View>
 
       <View style={styles.content}>
-        <View
-          style={[
-            styles.card,
-            { width: animalCardSize, height: animalCardSize },
-          ]}
-        >
-          <View
-            style={[
-              styles.dogContainer,
-              { width: animalCardSize, height: animalCardSize },
-            ]}
-          >
-            <Dog1Svg
-              width={animalCardSize}
-              height={animalCardSize}
-              preserveAspectRatio="none"
+        {isLoading ? (
+          <ActivityIndicator size="large" color={tokens.colors.brand.green} />
+        ) : error ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>{error}</Text>
+            <Button
+              label="Tentar novamente"
+              onPress={retry}
+              variant="primary"
             />
           </View>
-
-          <View style={styles.badgeContainer}>
-            <Text style={styles.badgeText}>BULMA, 4 ANOS</Text>
+        ) : !currentAnimal ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>
+              Não há mais pets na sua região no momento.
+            </Text>
+            <Button label="Atualizar" onPress={retry} variant="primary" />
           </View>
-        </View>
+        ) : (
+          <SwipeableCard
+            key={currentAnimal.id}
+            ref={cardRef}
+            onSwipeLeft={() => handleRejectRef.current()}
+            onSwipeRight={() => handleAcceptRef.current()}
+          >
+            <View
+              style={[
+                styles.card,
+                { width: animalCardSize, height: animalCardSize },
+              ]}
+            >
+              {currentAnimal.photoUrl ? (
+              <>
+                <Image
+                  key={`${currentAnimal.id}-${currentAnimal.photoUrl}`}
+                  source={{ uri: currentAnimal.photoUrl }}
+                  style={[
+                    styles.animalImage,
+                    isPhotoLoading && styles.animalImageHidden,
+                  ]}
+                  resizeMode="cover"
+                  onLoadEnd={() => setIsPhotoLoading(false)}
+                  onError={() => setIsPhotoLoading(false)}
+                />
+                {isPhotoLoading ? (
+                  <View style={styles.photoLoadingOverlay} pointerEvents="none">
+                    <ActivityIndicator size="large" color={tokens.colors.gray[500]} />
+                  </View>
+                ) : null}
+              </>
+            ) : (
+              <View style={styles.animalImagePlaceholder} />
+            )}
+
+              <View style={styles.badgeContainer}>
+                <Text style={styles.badgeText}>
+                  {currentAnimal.name.toUpperCase()},{" "}
+                  {formatPetAgeLabel(currentAnimal.birthDate)} •{" "}
+                  {Math.max(1, Math.round(currentAnimal.distanceKm))} KM
+                </Text>
+              </View>
+            </View>
+          </SwipeableCard>
+        )}
       </View>
 
       {/* Footer Actions */}
@@ -82,7 +152,8 @@ export function FindPetScreen() {
           shape="rounded"
           containerStyle={[styles.actionButton, styles.rejectButton]}
           iconColor={tokens.colors.white}
-          onPress={() => console.log("Rejected")}
+          onPress={() => cardRef.current?.swipeLeft()}
+          disabled={actionsDisabled}
         />
         <Button
           variant="icon"
@@ -91,7 +162,8 @@ export function FindPetScreen() {
           shape="rounded"
           containerStyle={[styles.actionButton, styles.acceptButton]}
           iconColor={tokens.colors.white}
-          onPress={() => console.log("Accepted")}
+          onPress={() => cardRef.current?.swipeRight()}
+          disabled={actionsDisabled}
         />
       </View>
     </SafeAreaView>
@@ -137,6 +209,7 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing[10],
     alignItems: "center",
     justifyContent: "center",
+    overflow: "visible",
   },
   card: {
     backgroundColor: tokens.colors.brand.green,
@@ -146,9 +219,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  dogContainer: {
-    alignItems: "center",
+  animalImage: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    zIndex: 0,
+  },
+  animalImageHidden: {
+    opacity: 0,
+  },
+  photoLoadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: tokens.colors.white,
+  },
+  animalImagePlaceholder: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: tokens.colors.gray[300],
+    position: "absolute",
   },
   badgeContainer: {
     position: "absolute",
@@ -157,12 +248,25 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing[2],
     paddingHorizontal: tokens.spacing[4],
     borderRadius: tokens.radius.sm,
+    zIndex: 3,
   },
   badgeText: {
     fontFamily: Fonts.secondary,
     fontSize: tokens.fontSize.base,
     color: tokens.colors.white,
     textTransform: "uppercase",
+  },
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: tokens.spacing[6],
+    gap: tokens.spacing[4],
+  },
+  emptyText: {
+    fontFamily: Fonts.medium,
+    fontSize: tokens.fontSize.lg,
+    color: tokens.colors.gray[600],
+    textAlign: "center",
   },
   footer: {
     flexDirection: "row",
