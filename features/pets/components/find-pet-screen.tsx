@@ -10,13 +10,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import Animated, {
-  Easing,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { SwipeableCard, SwipeableCardRef } from "./swipeable-card";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/button";
@@ -40,13 +34,10 @@ export function FindPetScreen() {
   const { isLoading, error, currentAnimal, handleAccept, handleReject, retry } =
     useFindPets();
 
-  const translateX = useSharedValue(0);
-  const rotationDeg = useSharedValue(0);
-  const swipeInProgressRef = useRef(false);
+  const cardRef = useRef<SwipeableCardRef>(null);
+  const [isPhotoLoading, setIsPhotoLoading] = useState(false);
   const handleAcceptRef = useRef(handleAccept);
   const handleRejectRef = useRef(handleReject);
-  const [isSwipeAnimating, setIsSwipeAnimating] = useState(false);
-  const [isPhotoLoading, setIsPhotoLoading] = useState(false);
 
   handleAcceptRef.current = handleAccept;
   handleRejectRef.current = handleReject;
@@ -59,63 +50,7 @@ export function FindPetScreen() {
     setIsPhotoLoading(Boolean(currentAnimal.photoUrl));
   }, [currentAnimal]);
 
-  useEffect(() => {
-    translateX.value = 0;
-    rotationDeg.value = 0;
-    swipeInProgressRef.current = false;
-    setIsSwipeAnimating(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- Reanimated shared values are stable refs
-  }, [currentAnimal?.id]);
-
-  const cardAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { rotate: `${rotationDeg.value}deg` },
-    ],
-  }));
-
-  const runSwipeAnimation = useCallback(
-    (direction: "left" | "right") => {
-      if (!currentAnimal || swipeInProgressRef.current) return;
-      swipeInProgressRef.current = true;
-      setIsSwipeAnimating(true);
-
-      const toX = direction === "left" ? -swipeDistance : swipeDistance;
-      const toRotate =
-        direction === "left" ? -SWIPE_ROTATION_DEG : SWIPE_ROTATION_DEG;
-      const easing = Easing.out(Easing.cubic);
-
-      rotationDeg.value = withTiming(toRotate, {
-        duration: SWIPE_DURATION_MS,
-        easing,
-      });
-
-      const completeSwipe = () => {
-        if (direction === "left") {
-          handleRejectRef.current();
-        } else {
-          handleAcceptRef.current();
-        }
-      };
-
-      translateX.value = withTiming(
-        toX,
-        {
-          duration: SWIPE_DURATION_MS,
-          easing,
-        },
-        (finished) => {
-          if (finished) {
-            runOnJS(completeSwipe)();
-          }
-        }
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- Reanimated shared values are stable refs
-    [currentAnimal, swipeDistance]
-  );
-
-  const actionsDisabled = isLoading || !currentAnimal || isSwipeAnimating;
+  const actionsDisabled = isLoading || !currentAnimal;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -161,14 +96,19 @@ export function FindPetScreen() {
             <Button label="Atualizar" onPress={retry} variant="primary" />
           </View>
         ) : (
-          <Animated.View
-            style={[
-              styles.card,
-              { width: animalCardSize, height: animalCardSize },
-              cardAnimatedStyle,
-            ]}
+          <SwipeableCard
+            key={currentAnimal.id}
+            ref={cardRef}
+            onSwipeLeft={() => handleRejectRef.current()}
+            onSwipeRight={() => handleAcceptRef.current()}
           >
-            {currentAnimal.photoUrl ? (
+            <View
+              style={[
+                styles.card,
+                { width: animalCardSize, height: animalCardSize },
+              ]}
+            >
+              {currentAnimal.photoUrl ? (
               <>
                 <Image
                   key={`${currentAnimal.id}-${currentAnimal.photoUrl}`}
@@ -191,14 +131,15 @@ export function FindPetScreen() {
               <View style={styles.animalImagePlaceholder} />
             )}
 
-            <View style={styles.badgeContainer}>
-              <Text style={styles.badgeText}>
-                {currentAnimal.name.toUpperCase()},{" "}
-                {formatPetAgeLabel(currentAnimal.birthDate)} •{" "}
-                {Math.max(1, Math.round(currentAnimal.distanceKm))} KM
-              </Text>
+              <View style={styles.badgeContainer}>
+                <Text style={styles.badgeText}>
+                  {currentAnimal.name.toUpperCase()},{" "}
+                  {formatPetAgeLabel(currentAnimal.birthDate)} •{" "}
+                  {Math.max(1, Math.round(currentAnimal.distanceKm))} KM
+                </Text>
+              </View>
             </View>
-          </Animated.View>
+          </SwipeableCard>
         )}
       </View>
 
@@ -211,7 +152,7 @@ export function FindPetScreen() {
           shape="rounded"
           containerStyle={[styles.actionButton, styles.rejectButton]}
           iconColor={tokens.colors.white}
-          onPress={() => runSwipeAnimation("left")}
+          onPress={() => cardRef.current?.swipeLeft()}
           disabled={actionsDisabled}
         />
         <Button
@@ -221,7 +162,7 @@ export function FindPetScreen() {
           shape="rounded"
           containerStyle={[styles.actionButton, styles.acceptButton]}
           iconColor={tokens.colors.white}
-          onPress={() => runSwipeAnimation("right")}
+          onPress={() => cardRef.current?.swipeRight()}
           disabled={actionsDisabled}
         />
       </View>

@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, type ReactNode } from 'react';
 import { AppState } from 'react-native';
 import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   Rubik_400Regular,
   Rubik_500Medium,
@@ -62,18 +63,20 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AuthProvider>
-        <AuthGate>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(app)" />
-          </Stack>
-        </AuthGate>
-      </AuthProvider>
-      <StatusBar style="dark" />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <AuthProvider>
+          <AuthGate>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(app)" />
+            </Stack>
+          </AuthGate>
+        </AuthProvider>
+        <StatusBar style="dark" />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
 
