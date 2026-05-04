@@ -31,6 +31,7 @@ import { useDeviceLocation } from "../hooks/use-device-location";
 import { DeviceLocationError } from "../infrastructure/device-location.service";
 import {
   createAnimalSchema,
+  MAX_ANIMAL_PHOTOS,
   type CreateAnimalFormData,
 } from "../schemas/create-animal.schema";
 
@@ -69,7 +70,7 @@ export function AddAnimalScreen() {
   } = useForm<CreateAnimalFormData>({
     resolver: zodResolver(createAnimalSchema),
     defaultValues: {
-      photoUri: "",
+      photoUris: [],
       name: "",
       species: "DOG",
       birthDate: "",
@@ -90,7 +91,7 @@ export function AddAnimalScreen() {
 
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [pendingBirthDate, setPendingBirthDate] = useState<Date>(new Date());
-  const photoUriValue = useWatch({ control, name: "photoUri" });
+  const photoUrisValue = useWatch({ control, name: "photoUris" }) || [];
   const birthDateValue = useWatch({ control, name: "birthDate" });
   const cityValue = useWatch({ control, name: "city" });
   const stateValue = useWatch({ control, name: "state" });
@@ -183,17 +184,20 @@ export function AddAnimalScreen() {
 
   const handlePickPhoto = async () => {
     try {
-      const result = await pickPhotoFromLibrary();
+      const remainingSlots = MAX_ANIMAL_PHOTOS - photoUrisValue.length;
+      if (remainingSlots <= 0) return;
 
-      if (!result.uri) {
+      const result = await pickPhotoFromLibrary(remainingSlots);
+
+      if (!result.uris.length) {
         return;
       }
 
-      setValue("photoUri", result.uri, {
+      setValue("photoUris", [...photoUrisValue, ...result.uris], {
         shouldDirty: true,
         shouldValidate: true,
       });
-      await trigger("photoUri");
+      await trigger("photoUris");
     } catch (error) {
       if (
         error instanceof AnimalPhotoPickerError &&
@@ -210,6 +214,15 @@ export function AddAnimalScreen() {
         "Não foi possível abrir a galeria. Tente novamente.",
       );
     }
+  };
+
+  const handleRemovePhoto = (indexToRemove: number) => {
+    const newUris = photoUrisValue.filter((_, index) => index !== indexToRemove);
+    setValue("photoUris", newUris, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    void trigger("photoUris");
   };
 
   return (
@@ -240,36 +253,50 @@ export function AddAnimalScreen() {
 
             <View style={styles.formContainer}>
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Foto do pet</Text>
-                <Pressable
-                  style={[
-                    styles.locationButton,
-                    isPickingPhoto && styles.locationButtonDisabled,
-                  ]}
-                  disabled={isPickingPhoto}
-                  onPress={() => {
-                    void handlePickPhoto();
-                  }}
-                >
-                  <Text style={styles.locationButtonText}>
-                    {isPickingPhoto
-                      ? "Selecionando foto..."
-                      : "Selecionar foto"}
-                  </Text>
-                </Pressable>
-                {photoUriValue ? (
-                  <Image
-                    source={{ uri: photoUriValue }}
-                    style={styles.photoPreview}
-                  />
+                <Text style={styles.label}>Fotos do pet ({photoUrisValue.length}/{MAX_ANIMAL_PHOTOS})</Text>
+                
+                {photoUrisValue.length > 0 ? (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.photosScroll}>
+                    {photoUrisValue.map((uri, index) => (
+                      <View key={uri} style={styles.photoPreviewContainer}>
+                        <Image source={{ uri }} style={styles.photoPreviewSmall} />
+                        <Pressable 
+                          style={styles.removePhotoButton}
+                          onPress={() => handleRemovePhoto(index)}
+                        >
+                          <Text style={styles.removePhotoText}>X</Text>
+                        </Pressable>
+                      </View>
+                    ))}
+                  </ScrollView>
                 ) : (
                   <Text style={styles.photoHelperText}>
-                    A foto é obrigatória para cadastrar o pet.
+                    Pelo menos uma foto é obrigatória para cadastrar o pet.
                   </Text>
                 )}
-                {errors.photoUri ? (
+
+                {photoUrisValue.length < MAX_ANIMAL_PHOTOS && (
+                  <Pressable
+                    style={[
+                      styles.locationButton,
+                      isPickingPhoto && styles.locationButtonDisabled,
+                    ]}
+                    disabled={isPickingPhoto}
+                    onPress={() => {
+                      void handlePickPhoto();
+                    }}
+                  >
+                    <Text style={styles.locationButtonText}>
+                      {isPickingPhoto
+                        ? "Selecionando foto..."
+                        : "Adicionar foto"}
+                    </Text>
+                  </Pressable>
+                )}
+
+                {errors.photoUris ? (
                   <Text style={styles.errorText}>
-                    {errors.photoUri.message}
+                    {errors.photoUris.message}
                   </Text>
                 ) : null}
               </View>
@@ -814,6 +841,38 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.primary,
     fontSize: tokens.fontSize.sm,
     color: tokens.colors.gray[600],
+  },
+  photosScroll: {
+    flexDirection: "row",
+    marginBottom: tokens.spacing[2],
+  },
+  photoPreviewContainer: {
+    position: "relative",
+    marginRight: tokens.spacing[3],
+  },
+  photoPreviewSmall: {
+    width: 100,
+    height: 100,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.colors.gray[100],
+  },
+  removePhotoButton: {
+    position: "absolute",
+    top: -8,
+    right: -8,
+    backgroundColor: tokens.colors.red[500],
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: tokens.colors.white,
+  },
+  removePhotoText: {
+    color: tokens.colors.white,
+    fontFamily: Fonts.bold,
+    fontSize: tokens.fontSize.xs,
   },
   datePickerWrapper: {
     borderWidth: 1,

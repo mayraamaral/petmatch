@@ -13,13 +13,13 @@ export class AnimalPhotoPickerError extends Error {
 }
 
 type PickResult = {
-  uri: string | null;
+  uris: string[];
 };
 
 export function useAnimalPhotoPicker() {
   const [isPickingPhoto, setIsPickingPhoto] = useState(false);
 
-  const pickPhotoFromLibrary = async (): Promise<PickResult> => {
+  const pickPhotoFromLibrary = async (selectionLimit: number = 5): Promise<PickResult> => {
     try {
       setIsPickingPhoto(true);
       const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -34,16 +34,17 @@ export function useAnimalPhotoPicker() {
       const result = await ImagePicker.launchImageLibraryAsync(
         {
           mediaTypes: ["images"] as any,
-          allowsEditing: true,
+          allowsMultipleSelection: true,
+          selectionLimit,
           quality: 0.8,
         } as any
       );
 
       if (result.canceled || !result.assets?.length) {
-        return { uri: null };
+        return { uris: [] };
       }
 
-      return { uri: result.assets[0].uri };
+      return { uris: result.assets.map(asset => asset.uri) };
     } catch (error) {
       if (error instanceof AnimalPhotoPickerError) {
         throw error;

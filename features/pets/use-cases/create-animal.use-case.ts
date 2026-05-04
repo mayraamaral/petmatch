@@ -20,21 +20,23 @@ export class CreateAnimalUseCase {
       throw new Error("Perfil de doador/abrigo não encontrado.");
     }
 
-    const uploadedPhoto = await this.animalPhotoRepository.uploadPhoto(
-      raw.photoUri,
-      userId
+    const uploadedPhotos = await Promise.all(
+      raw.photoUris.map((uri) => this.animalPhotoRepository.uploadPhoto(uri, userId))
     );
 
-    const entity = AnimalRegistrationEntity.create(raw, uploadedPhoto.storagePath);
+    const storagePaths = uploadedPhotos.map((photo) => photo.storagePath);
+    const entity = AnimalRegistrationEntity.create(raw, storagePaths);
 
     try {
       await this.animalRepository.createForLister(currentUser.listerProfileId, entity);
     } catch (error) {
       try {
-        await this.animalPhotoRepository.deletePhoto(uploadedPhoto.storagePath);
+        await Promise.all(
+          storagePaths.map((path) => this.animalPhotoRepository.deletePhoto(path))
+        );
       } catch (cleanupError) {
-        console.error("Falha ao remover foto após erro ao cadastrar pet.", {
-          storagePath: uploadedPhoto.storagePath,
+        console.error("Falha ao remover fotos após erro ao cadastrar pet.", {
+          storagePaths,
           cleanupError,
           originalError: error,
         });

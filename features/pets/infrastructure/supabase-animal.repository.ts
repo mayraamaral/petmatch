@@ -56,8 +56,27 @@ export class SupabaseAnimalRepository implements AnimalRepository {
       lister_profile_id: listerProfileId,
     };
 
-    const { error: insertError } = await supabase.from("animals").insert(payload);
+    const { data: animal, error: insertError } = await supabase
+      .from("animals")
+      .insert(payload)
+      .select("id")
+      .single();
+      
     if (insertError) throw insertError;
+
+    const photoPayloads = entity.photoUrls.map((url, index) => ({
+      animal_id: animal.id,
+      photo_url: url,
+      display_order: index,
+    }));
+
+    if (photoPayloads.length > 0) {
+      const { error: photosError } = await supabase
+        .from("animal_photos")
+        .insert(photoPayloads);
+        
+      if (photosError) throw photosError;
+    }
   }
 
   async hasAnimalsForLister(listerProfileId: string): Promise<boolean> {
