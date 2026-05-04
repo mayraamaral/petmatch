@@ -6,10 +6,7 @@ export type DeviceLocationErrorCode =
   | "UNKNOWN";
 
 export class DeviceLocationError extends Error {
-  constructor(
-    public readonly code: DeviceLocationErrorCode,
-    message: string
-  ) {
+  constructor(public readonly code: DeviceLocationErrorCode, message: string) {
     super(message);
   }
 }
@@ -23,63 +20,101 @@ export type ResolvedDeviceLocation = {
   hasCompleteAddress: boolean;
 };
 
+type AddressParts = Pick<
+  ResolvedDeviceLocation,
+  "city" | "state" | "country"
+>;
+
+const COORD_DECIMALS = 6;
+const POSITION_OPTIONS = {
+  accuracy: Location.Accuracy.Balanced,
+} as const;
+
+const EMPTY_ADDRESS: AddressParts = {
+  city: "",
+  state: "",
+  country: "",
+};
+
+function coordsFrom(position: Location.LocationObject): {
+  latitude: number;
+  longitude: number;
+} {
+  return {
+    latitude: position.coords.latitude,
+    longitude: position.coords.longitude,
+  };
+}
+
+function addressFromGeocode(
+  row: Location.LocationGeocodedAddress
+): AddressParts {
+  return {
+    city: row.city ?? row.district ?? row.subregion ?? "",
+    state: row.region ?? row.subregion ?? "",
+    country: row.country ?? "",
+  };
+}
+
 export class DeviceLocationService {
   async resolveCurrentLocation(): Promise<ResolvedDeviceLocation> {
+    await this.assertForegroundAllowed();
+    const coords = await this.fetchCoordinates();
+    const address = await this.tryResolveAddress(coords);
+    return this.toResolved(coords, address);
+  }
+
+  private async assertForegroundAllowed(): Promise<void> {
     const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") return;
 
-    if (status !== "granted") {
-      throw new DeviceLocationError(
-        "PERMISSION_DENIED",
-        "Permissão de localização negada."
-      );
-    }
+    throw new DeviceLocationError(
+      "PERMISSION_DENIED",
+      "Permissão de localização negada."
+    );
+  }
 
-    let currentPosition: Location.LocationObject;
+  private async fetchCoordinates(): Promise<{
+    latitude: number;
+    longitude: number;
+  }> {
     try {
-      currentPosition = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
+      const position = await Location.getCurrentPositionAsync(POSITION_OPTIONS);
+      return coordsFrom(position);
     } catch {
       throw new DeviceLocationError(
         "LOCATION_UNAVAILABLE",
         "Não foi possível obter localização atual."
       );
     }
+  }
 
-    const latitude = currentPosition.coords.latitude.toFixed(6);
-    const longitude = currentPosition.coords.longitude.toFixed(6);
-
-    let city = "";
-    let state = "";
-    let country = "";
-
+  private async tryResolveAddress(coords: {
+    latitude: number;
+    longitude: number;
+  }): Promise<AddressParts> {
     try {
-      const addresses = await Location.reverseGeocodeAsync({
-        latitude: currentPosition.coords.latitude,
-        longitude: currentPosition.coords.longitude,
-      });
-
-      const firstAddress = addresses[0];
-      if (firstAddress) {
-        city =
-          firstAddress.city ?? firstAddress.district ?? firstAddress.subregion ?? "";
-        state = firstAddress.region ?? firstAddress.subregion ?? "";
-        country = firstAddress.country ?? "";
-      }
+      const rows = await Location.reverseGeocodeAsync(coords);
+      const first = rows[0];
+      return first ? addressFromGeocode(first) : EMPTY_ADDRESS;
     } catch {
-      throw new DeviceLocationError(
-        "UNKNOWN",
-        "Não foi possível resolver o endereço da localização."
-      );
+      return EMPTY_ADDRESS;
     }
+  }
+
+  private toResolved(
+    coords: { latitude: number; longitude: number },
+    address: AddressParts
+  ): ResolvedDeviceLocation {
+    const { city, state, country } = address;
 
     return {
-      latitude,
-      longitude,
+      latitude: coords.latitude.toFixed(COORD_DECIMALS),
+      longitude: coords.longitude.toFixed(COORD_DECIMALS),
       city,
       state,
       country,
-      hasCompleteAddress: !!city && !!state && !!country,
+      hasCompleteAddress: !!(city && state && country),
     };
   }
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import {
   DeviceLocationError,
@@ -11,7 +11,7 @@ const deviceLocationService = new DeviceLocationService();
 export function useDeviceLocation() {
   const [isResolvingLocation, setIsResolvingLocation] = useState(false);
 
-  const resolveCurrentLocation = async (): Promise<ResolvedDeviceLocation> => {
+  const resolveCurrentLocation = useCallback(async (): Promise<ResolvedDeviceLocation> => {
     try {
       setIsResolvingLocation(true);
       return await deviceLocationService.resolveCurrentLocation();
@@ -26,7 +26,7 @@ export function useDeviceLocation() {
     } finally {
       setIsResolvingLocation(false);
     }
-  };
+  }, []);
 
   return {
     isResolvingLocation,
