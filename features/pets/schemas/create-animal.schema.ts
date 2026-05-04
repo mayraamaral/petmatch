@@ -19,12 +19,13 @@ const longitudeSchema = z
     return Number.isFinite(parsed) && parsed >= -180 && parsed <= 180;
   }, "Longitude deve estar entre -180 e 180");
 
+export const MAX_ANIMAL_PHOTOS = 5;
+
 export const createAnimalSchema = z.object({
-  photoUri: z.string().trim().min(1, "Foto do pet é obrigatória"),
+  photoUris: z.array(z.string().trim()).min(1, "Adicione pelo menos uma foto do pet").max(MAX_ANIMAL_PHOTOS, `Máximo de ${MAX_ANIMAL_PHOTOS} fotos permitidas`),
   name: z.string().trim().min(2, "Nome do pet é obrigatório"),
   species: z.enum(["DOG", "CAT", "BIRD", "RABBIT", "OTHER"], {
-    required_error: "Selecione o tipo do animal",
-    invalid_type_error: "Selecione o tipo do animal",
+    message: "Selecione o tipo do animal",
   }),
   birthDate: z
     .string()
@@ -43,12 +44,10 @@ export const createAnimalSchema = z.object({
   behaviorNotes: z.string().trim().optional(),
   interestingFacts: z.string().trim().optional(),
   size: z.enum(["SMALL", "MEDIUM", "LARGE"], {
-    required_error: "Selecione o porte do animal",
-    invalid_type_error: "Selecione o porte do animal",
+    message: "Selecione o porte do animal",
   }),
   sex: z.enum(["MALE", "FEMALE", "UNKNOWN"], {
-    required_error: "Selecione o sexo do animal",
-    invalid_type_error: "Selecione o sexo do animal",
+    message: "Selecione o sexo do animal",
   }),
   isNeutered: z.boolean(),
   isVaccinated: z.boolean(),

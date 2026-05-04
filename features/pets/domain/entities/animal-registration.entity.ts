@@ -31,12 +31,12 @@ export class AnimalRegistrationEntity {
     sex: AnimalSex;
     isNeutered: boolean;
     isVaccinated: boolean;
-    photoUrl: string;
+    photoUrls: string[];
   }) {}
 
   static create(
     raw: CreateAnimalFormData,
-    uploadedPhotoPath: string
+    uploadedPhotoPaths: string[]
   ): AnimalRegistrationEntity {
     return new AnimalRegistrationEntity({
       name: raw.name.trim(),
@@ -54,8 +54,12 @@ export class AnimalRegistrationEntity {
       sex: raw.sex,
       isNeutered: raw.isNeutered,
       isVaccinated: raw.isVaccinated,
-      photoUrl: uploadedPhotoPath,
+      photoUrls: uploadedPhotoPaths,
     });
+  }
+
+  get photoUrls() {
+    return this.data.photoUrls;
   }
 
   toPersistence() {
@@ -75,7 +79,6 @@ export class AnimalRegistrationEntity {
       sex: this.data.sex,
       is_neutered: this.data.isNeutered,
       is_vaccinated: this.data.isVaccinated,
-      photo_url: this.data.photoUrl,
     };
   }
 }
