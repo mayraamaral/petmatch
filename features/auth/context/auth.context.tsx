@@ -32,7 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     isMountedRef.current = true;
 
-    void supabase.auth.getSession().then(({ data }) => {
+    void Promise.all([
+      supabase.auth.getSession(),
+      new Promise((resolve) => setTimeout(resolve, 2000)), // 2 seconds minimum delay
+    ]).then(([ { data } ]) => {
       if (!isMountedRef.current) return;
       setSession(data.session);
       setIsBootstrapping(false);

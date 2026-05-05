@@ -17,8 +17,8 @@ import { Button } from "@/components/ui/button";
 import { LogoFull } from "@/components/ui/logo-full";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
-import { signupSchema, type SignupFormData } from "../schemas/signup.schema";
 import { useSignup } from "../hooks/use-signup";
+import { signupSchema, type SignupFormData } from "../schemas/signup.schema";
 
 const ROLES = [
   { value: "adotante", label: "Quero adotar" },
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   label: {
-    fontFamily: Fonts.medium,
+    fontFamily: Fonts.bold,
     fontSize: tokens.fontSize.sm,
     color: tokens.colors.gray[700],
   },
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing[2],
   },
   linkText: {
-    fontFamily: Fonts.medium,
+    fontFamily: Fonts.bold,
     fontSize: tokens.fontSize.sm,
     color: tokens.colors.brand.primary,
   },

@@ -26,6 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   icon: {
-    marginLeft: 4,
+    marginLeft: 6,
   },
 });

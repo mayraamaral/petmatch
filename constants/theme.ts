@@ -39,4 +39,6 @@ export const Fonts = {
   semiBold: appFonts.primarySemiBold,
   bold: appFonts.primaryBold,
   secondary: appFonts.secondary,
+  logoRegular: appFonts.logoRegular,
+  logoBold: appFonts.logoBold,
 };

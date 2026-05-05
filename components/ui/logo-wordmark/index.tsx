@@ -26,25 +26,24 @@ export function LogoWordmark({ size = "md", style }: LogoWordmarkProps) {
 const styles = StyleSheet.create({
   base: {
     letterSpacing: 0.4,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   sizeSm: {
     fontSize: 40,
-    lineHeight: 46,
   },
   sizeMd: {
     fontSize: 64,
-    lineHeight: 70,
   },
   sizeLg: {
     fontSize: 80,
-    lineHeight: 88,
   },
   pet: {
-    color: tokens.colors.brand.primary,
-    fontFamily: Fonts.primary,
+    color: tokens.colors.brand.secondary,
+    fontFamily: Fonts.logoBold,
   },
   match: {
-    color: tokens.colors.brand.green,
-    fontFamily: Fonts.bold,
+    color: tokens.colors.brand.primary,
+    fontFamily: Fonts.logoBold,
   },
 });
