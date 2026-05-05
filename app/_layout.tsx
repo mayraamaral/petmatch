@@ -8,12 +8,11 @@ import { AppState } from 'react-native';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
-  Rubik_400Regular,
-  Rubik_500Medium,
-  Rubik_600SemiBold,
-  Rubik_700Bold,
-} from '@expo-google-fonts/rubik';
-import { WalterTurncoat_400Regular } from '@expo-google-fonts/walter-turncoat';
+  Baloo2_400Regular,
+  Baloo2_500Medium,
+  Baloo2_600SemiBold,
+  Baloo2_700Bold,
+} from '@expo-google-fonts/baloo-2';
 
 import StorybookUIRoot from '../.rnstorybook';
 import { SplashLoader } from '@/components/ui/splash-loader';
@@ -27,11 +26,10 @@ export default function RootLayout() {
   const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true';
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    RubikRegular: Rubik_400Regular,
-    RubikMedium: Rubik_500Medium,
-    RubikSemiBold: Rubik_600SemiBold,
-    RubikBold: Rubik_700Bold,
-    WalterTurncoat: WalterTurncoat_400Regular,
+    Baloo2Regular: Baloo2_400Regular,
+    Baloo2Medium: Baloo2_500Medium,
+    Baloo2SemiBold: Baloo2_600SemiBold,
+    Baloo2Bold: Baloo2_700Bold,
   });
 
   useEffect(() => {

@@ -239,6 +239,8 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.bold,
     letterSpacing: 0.8,
     textAlign: "center",
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
   uppercaseLabel: {
     textTransform: "uppercase",
@@ -248,15 +250,12 @@ const styles = StyleSheet.create({
   },
   labelSm: {
     fontSize: tokens.fontSize.xl,
-    lineHeight: tokens.lineHeight.xl,
   },
   labelMd: {
     fontSize: tokens.fontSize["2xl"],
-    lineHeight: tokens.lineHeight["2xl"],
   },
   labelLg: {
     fontSize: tokens.fontSize["3xl"],
-    lineHeight: tokens.lineHeight["3xl"],
   },
   primaryLabel: {
     color: tokens.colors.white,

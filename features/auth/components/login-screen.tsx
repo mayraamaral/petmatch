@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     gap: tokens.spacing[2],
   },
   label: {
-    fontFamily: Fonts.medium,
+    fontFamily: Fonts.bold,
     fontSize: tokens.fontSize.sm,
     color: tokens.colors.gray[700],
   },
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing[2],
   },
   linkText: {
-    fontFamily: Fonts.medium,
+    fontFamily: Fonts.bold,
     fontSize: tokens.fontSize.sm,
     color: tokens.colors.brand.primary,
   },

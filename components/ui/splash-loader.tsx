@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: tokens.spacing[4],
     backgroundColor: tokens.colors.white,
   },
 });

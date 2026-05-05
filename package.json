@@ -12,7 +12,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
-    "@expo-google-fonts/rubik": "^0.4.2",
+    "@expo-google-fonts/baloo-2": "^0.4.2",
     "@expo-google-fonts/walter-turncoat": "^0.4.1",
     "@expo/vector-icons": "^15.0.3",
     "@hookform/resolvers": "^5.2.2",
