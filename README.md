@@ -1,8 +1,8 @@
-[English version below](#petmatch-english)
+[English version below](#faro-english)
 
-# PetMatch
+# Faro
 
-O **PetMatch** é um aplicativo para aproximar animais disponíveis para adoção e pessoas que querem adotar, tornando o processo mais simples, humano e transparente.
+O **Faro** é um aplicativo para aproximar animais disponíveis para adoção e pessoas que querem adotar, tornando o processo mais simples, humano e transparente.
 
 Este repositório é um app **React Native** com **Expo**, usando roteamento baseado em arquivos (**Expo Router**).
 
@@ -16,15 +16,15 @@ O projeto foi configurado e testado num **PC Linux (Ubuntu 24)**; o app é execu
 2. Inicie o servidor de desenvolvimento: `pnpm start`
 3. No celular, instale o **Expo Go** e leia o QR code do terminal com a câmera do telefone (PC e telefone tem que estar na mesma rede Wi‑Fi).
 
-Instruções detalhadas, pré-requisitos e scripts úteis estão na [versão em inglês](#petmatch-english) abaixo.
+Instruções detalhadas, pré-requisitos e scripts úteis estão na [versão em inglês](#faro-english) abaixo.
 
 ---
 
-<a id="petmatch-english"></a>
+<a id="faro-english"></a>
 
-# PetMatch
+# Faro
 
-**PetMatch** is an app that connects animals looking for a home with people who want to adopt — making adoption easier, kinder, and clearer.
+**Faro** is an app that connects animals looking for a home with people who want to adopt — making adoption easier, kinder, and clearer.
 
 This repo is a **React Native** app built with **Expo** and file-based routing (**Expo Router**).
 
