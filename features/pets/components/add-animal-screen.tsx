@@ -18,7 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/button";
-import { LogoFull } from "@/components/ui/logo-full";
+import { LogoWordmark } from "@/components/ui/logo-wordmark";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import {
@@ -235,7 +235,7 @@ export function AddAnimalScreen() {
         >
           <View style={styles.card}>
             <View style={styles.logoContainer}>
-              <LogoFull size="sm" />
+              <LogoWordmark size="sm" />
               <Text style={styles.title}>Cadastrar pet</Text>
             </View>
 

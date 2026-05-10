@@ -21,3 +21,11 @@ export const Sizes: Story = {
     </View>
   ),
 };
+
+export const Negative: Story = {
+  render: () => (
+    <View style={{ backgroundColor: "#FF6B2C", padding: 16 }}>
+      <LogoWordmark size="lg" negative />
+    </View>
+  ),
+};

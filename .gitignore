@@ -46,3 +46,7 @@ app-example
 # Supabase temp
 supabase/.temp
 
+# Opencode config
+.opencode/
+
+.playwright-mcp

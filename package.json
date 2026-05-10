@@ -1,9 +1,10 @@
 {
-  "name": "petmatch",
+  "name": "faro",
   "main": "expo-router/entry",
   "version": "1.1.0",
   "scripts": {
     "start": "expo start",
+    "start:web": "expo start --web",
     "storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start -c",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
@@ -12,7 +13,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
-    "@expo-google-fonts/baloo-2": "^0.4.2",
+    "@expo-google-fonts/quicksand": "^0.4.1",
     "@expo-google-fonts/walter-turncoat": "^0.4.1",
     "@expo/vector-icons": "^15.0.3",
     "@hookform/resolvers": "^5.2.2",

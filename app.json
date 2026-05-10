@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "petmatch",
-    "slug": "petmatch",
+    "name": "faro",
+    "slug": "faro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "petmatch",
+    "scheme": "faro",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "dev.mayra.petmatch",
+      "bundleIdentifier": "dev.mayra.faro",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "dev.mayra.petmatch"
+      "package": "dev.mayra.faro"
     },
     "web": {
       "output": "static",

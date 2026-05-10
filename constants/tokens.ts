@@ -27,11 +27,11 @@ export const tokens = {
 
     brand: {
       background: '#D3D3D3',
-      primary: '#026F6C',
-      secondary: '#D96B3A',
-      green: '#026F6C',
+      primary: '#0952A6',
+      secondary: '#EF8422',
+      green: '#0952A6',
       yellow: '#F8C630',
-      orange: '#D96B3A',
+      orange: '#EF8422',
     },
   },
 
@@ -80,11 +80,11 @@ export const tokens = {
 } as const;
 
 export const appFonts = {
-  primary: 'Baloo2Regular',
-  primaryMedium: 'Baloo2Medium',
-  primarySemiBold: 'Baloo2SemiBold',
-  primaryBold: 'Baloo2Bold',
-  secondary: 'Baloo2Bold',
-  logoRegular: 'Baloo2Regular',
-  logoBold: 'Baloo2Bold',
+  primary: 'QuicksandRegular',
+  primaryMedium: 'QuicksandMedium',
+  primarySemiBold: 'QuicksandSemiBold',
+  primaryBold: 'QuicksandBold',
+  secondary: 'WalterTurncoatRegular',
+  logoRegular: 'QuicksandRegular',
+  logoBold: 'QuicksandBold',
 } as const;

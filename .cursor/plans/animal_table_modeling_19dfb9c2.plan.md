@@ -39,8 +39,8 @@ Create a production-ready `animals` table and related SQL structures in Supabase
 
 ## Files to extend
 
-- Add a new migration under [`/home/mayra/Documents/projects/petmatch/supabase/migrations`](file:///home/mayra/Documents/projects/petmatch/supabase/migrations) using the same style used in [`/home/mayra/Documents/projects/petmatch/supabase/migrations/20260419000000_entity_modeling.sql`](file:///home/mayra/Documents/projects/petmatch/supabase/migrations/20260419000000_entity_modeling.sql).
-- Keep consistency with project planning conventions seen in [`/home/mayra/Documents/projects/petmatch/.cursor/plans/supabase_entity_modeling_63694da9.plan.md`](file:///home/mayra/Documents/projects/petmatch/.cursor/plans/supabase_entity_modeling_63694da9.plan.md).
+- Add a new migration under [`/home/mayra/Documents/projects/faro/supabase/migrations`](file:///home/mayra/Documents/projects/faro/supabase/migrations) using the same style used in [`/home/mayra/Documents/projects/faro/supabase/migrations/20260419000000_entity_modeling.sql`](file:///home/mayra/Documents/projects/faro/supabase/migrations/20260419000000_entity_modeling.sql).
+- Keep consistency with project planning conventions seen in [`/home/mayra/Documents/projects/faro/.cursor/plans/supabase_entity_modeling_63694da9.plan.md`](file:///home/mayra/Documents/projects/faro/.cursor/plans/supabase_entity_modeling_63694da9.plan.md).
 
 ## Proposed schema
 
