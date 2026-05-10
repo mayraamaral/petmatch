@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/button";
-import { LogoFull } from "@/components/ui/logo-full";
+import { LogoWordmark } from "@/components/ui/logo-wordmark";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import { useEmailConfirmation } from "../hooks/use-email-confirmation";
@@ -49,7 +49,7 @@ export function EmailConfirmationScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.card}>
             <View style={styles.logoContainer}>
-              <LogoFull size="sm" />
+              <LogoWordmark size="sm" />
             </View>
 
             <View style={styles.formContainer}>

@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
-import LogoSvg from "../../../assets/images/logo.svg";
-import { tokens } from "../../../constants/tokens";
 
+import { LogoWordmark } from "../logo-wordmark";
 import { Card } from "./index";
 
 const meta = {
@@ -47,7 +46,7 @@ export const Normal: Story = {
     <View style={{ width: 300 }}>
       <Card {...args}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-          <LogoSvg width={81} height={82} color={tokens.colors.white} />
+          <LogoWordmark size="sm" />
         </View>
       </Card>
     </View>
@@ -64,7 +63,7 @@ export const Info: Story = {
     <View style={{ width: 300 }}>
       <Card {...args}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-          <LogoSvg width={81} height={82} color={tokens.colors.white} />
+          <LogoWordmark size="sm" />
         </View>
       </Card>
     </View>

@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 
 import Dog1Svg from "@/assets/images/dog-1.svg";
 import { Button } from "@/components/ui/button";
-import { LogoFull } from "@/components/ui/logo-full";
+import { LogoWordmark } from "@/components/ui/logo-wordmark";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 
@@ -15,7 +15,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.headerWrapper}>
         <View style={styles.header}>
-          <LogoFull size="sm" />
+          <LogoWordmark size="sm" />
         </View>
       </View>
 

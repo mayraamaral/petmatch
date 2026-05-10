@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import AddAnimalSvg from "@/assets/images/add-animal.svg";
-import { LogoFull } from "@/components/ui/logo-full";
+import { LogoWordmark } from "@/components/ui/logo-wordmark";
 import { Fonts } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import { useAuth } from "@/features/auth/context/auth.context";
@@ -43,7 +43,7 @@ export function ListerHomeScreen() {
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.headerWrapper}>
         <View style={styles.header}>
-          <LogoFull size="sm" />
+          <LogoWordmark size="sm" />
           <Pressable
             onPress={() => {
               void logout();

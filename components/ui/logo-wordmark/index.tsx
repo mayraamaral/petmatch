@@ -1,49 +1,26 @@
-import { StyleSheet, Text, type StyleProp, type TextStyle } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
 
-import { Fonts } from "@/constants/theme";
-import { tokens } from "@/constants/tokens";
+import LogoSvg from "@/assets/images/logo.svg";
 
 type LogoWordmarkProps = {
   size?: "sm" | "md" | "lg";
-  style?: StyleProp<TextStyle>;
+  style?: StyleProp<ViewStyle>;
 };
 
+const logoSizeBySize = {
+  sm: { width: 128, height: 48 },
+  md: { width: 168, height: 63 },
+  lg: { width: 224, height: 84 },
+} as const;
+
 export function LogoWordmark({ size = "md", style }: LogoWordmarkProps) {
-  const sizeStyleBySize = {
-    sm: styles.sizeSm,
-    md: styles.sizeMd,
-    lg: styles.sizeLg,
-  } as const;
+  const logoSize = logoSizeBySize[size];
 
   return (
-    <Text style={[styles.base, sizeStyleBySize[size], style]}>
-      <Text style={styles.pet}>Pet</Text>
-      <Text style={styles.match}>Match</Text>
-    </Text>
+    <LogoSvg
+      width={logoSize.width}
+      height={logoSize.height}
+      style={style}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    letterSpacing: 0.4,
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
-  sizeSm: {
-    fontSize: 40,
-  },
-  sizeMd: {
-    fontSize: 64,
-  },
-  sizeLg: {
-    fontSize: 80,
-  },
-  pet: {
-    color: tokens.colors.brand.secondary,
-    fontFamily: Fonts.logoBold,
-  },
-  match: {
-    color: tokens.colors.brand.primary,
-    fontFamily: Fonts.logoBold,
-  },
-});
