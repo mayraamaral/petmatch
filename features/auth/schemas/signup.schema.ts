@@ -2,8 +2,7 @@ import { z } from "zod";
 
 export const signupSchema = z.object({
   role: z.enum(["adotante", "doador", "abrigo"], { 
-    required_error: "Selecione como você quer usar o app",
-    invalid_type_error: "Selecione um perfil válido"
+    message: "Selecione um perfil válido"
   }),
   name: z.string().optional(),
   tradeName: z.string().optional(),
