@@ -20,22 +20,24 @@ export class AdoptionEntity {
     return this.data.animalId;
   }
   get adopterProfileId(): string | null | undefined {
-    return this.data.status !== 'UNDER_REVIEW' ? this.data.adopterProfileId : undefined;
+    return !this.isUnderReview ? this.data.adopterProfileId : undefined;
   }
   get status(): AdoptionProcessStatus {
     return this.data.status;
   }
   get adoptionDate(): string | null | undefined {
-    return this.data.status === 'ADOPTED' ? this.data.adoptionDate : undefined;
+    return this.isAdopted && 'adoptionDate' in this.data ? this.data.adoptionDate : undefined;
   }
   get cancelReason(): string | null | undefined {
-    return (this.data.status === 'CANCELED' || this.data.status === 'REJECTED') ? this.data.cancelReason : undefined;
+    return (this.isCanceled || this.isRejected) && 'cancelReason' in this.data ? this.data.cancelReason : undefined;
   }
   get notes(): string | null | undefined {
     return this.data.notes;
   }
   get decisionNotes(): string | null | undefined {
-    return this.data.status === 'REJECTED' ? this.data.decisionNotes : undefined;
+    return this.isTerminal && 'decisionNotes' in this.data 
+      ? this.data.decisionNotes 
+      : undefined;
   }
   get visitScheduledFor(): string | null | undefined {
     return 'visitScheduledFor' in this.data ? this.data.visitScheduledFor : undefined;
@@ -158,13 +160,10 @@ export class AdoptionEntity {
     
     const nextData = {
       ...this.data,
-      status: "REJECTED",
+      status: "REJECTED" as const,
       cancelReason: reason,
+      ...(decisionNotes !== undefined ? { decisionNotes } : {})
     };
-    
-    if (decisionNotes !== undefined) {
-      (nextData as any).decisionNotes = decisionNotes;
-    }
     
     this.data = adoptionSchema.parse(nextData);
   }
