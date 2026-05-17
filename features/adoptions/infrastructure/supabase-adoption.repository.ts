@@ -5,7 +5,7 @@ import { AdoptionData, AdoptionProcessStatus } from '../schemas/adoption.schema'
 import { AdoptionError } from '../domain/errors/adoption.error';
 
 export class SupabaseAdoptionRepository implements AdoptionRepository {
-  private mapToDomain(row: any): AdoptionData {
+  private mapToDomain(row: Record<string, any>): AdoptionData {
     return {
       id: row.id,
       animalId: row.animal_id,
@@ -47,7 +47,7 @@ export class SupabaseAdoptionRepository implements AdoptionRepository {
   }
 
   async updateAdoption(entity: AdoptionEntity): Promise<AdoptionEntity> {
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       status: entity.status,
       updated_at: new Date().toISOString(),
       adoption_date: entity.adoptionDate,
@@ -81,7 +81,8 @@ export class SupabaseAdoptionRepository implements AdoptionRepository {
       .eq('id', id)
       .single();
 
-    if (error || !row) return null;
+    if (error) throw new AdoptionError(`Failed to fetch adoption: ${error.message}`, 'INVALID_INPUT', error);
+    if (!row) return null;
     return AdoptionEntity.create(this.mapToDomain(row));
   }
 
@@ -92,7 +93,8 @@ export class SupabaseAdoptionRepository implements AdoptionRepository {
       .eq('animal_id', animalId)
       .order('created_at', { ascending: false });
 
-    if (error || !rows) return [];
+    if (error) throw new AdoptionError(`Failed to fetch adoptions: ${error.message}`, 'INVALID_INPUT', error);
+    if (!rows) return [];
     return rows.map((row) => AdoptionEntity.create(this.mapToDomain(row)));
   }
 
@@ -103,7 +105,8 @@ export class SupabaseAdoptionRepository implements AdoptionRepository {
       .eq('adopter_profile_id', adopterProfileId)
       .order('created_at', { ascending: false });
 
-    if (error || !rows) return [];
+    if (error) throw new AdoptionError(`Failed to fetch adoptions: ${error.message}`, 'INVALID_INPUT', error);
+    if (!rows) return [];
     return rows.map((row) => AdoptionEntity.create(this.mapToDomain(row)));
   }
 
@@ -114,7 +117,8 @@ export class SupabaseAdoptionRepository implements AdoptionRepository {
       .eq('animals.lister_profile_id', listerProfileId)
       .order('created_at', { ascending: false });
 
-    if (error || !rows) return [];
+    if (error) throw new AdoptionError(`Failed to fetch adoptions: ${error.message}`, 'INVALID_INPUT', error);
+    if (!rows) return [];
     return rows.map((row) => AdoptionEntity.create(this.mapToDomain(row)));
   }
 }

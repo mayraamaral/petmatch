@@ -301,9 +301,16 @@ BEGIN
 END;
 $$;
 
--- 13. REVOKE column-level privileges
-REVOKE UPDATE (is_available) ON public.animals FROM authenticated;
-REVOKE UPDATE (is_available) ON public.animals FROM anon;
+-- 13. REVOKE table-level UPDATE and grant column-level to protect is_available
+REVOKE UPDATE ON public.animals FROM authenticated;
+REVOKE UPDATE ON public.animals FROM anon;
+
+GRANT UPDATE (
+  name, species, photo_url, birth_date, latitude, longitude, 
+  city, state, country, health_notes, behavior_notes, 
+  interesting_facts, adoption_status, is_neutered, is_vaccinated, 
+  size, sex, deleted_at, updated_at
+) ON public.animals TO authenticated;
 
 -- 14. CREATE TRIGGER set_updated_at_adoptions
 CREATE TRIGGER set_updated_at_adoptions

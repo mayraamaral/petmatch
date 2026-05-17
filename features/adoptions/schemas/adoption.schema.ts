@@ -13,12 +13,15 @@ export const AdoptionProcessStatusEnum = z.enum([
 
 export type AdoptionProcessStatus = z.infer<typeof AdoptionProcessStatusEnum>;
 
+const isoDatetime = z.iso.datetime();
+const uuid = z.uuid();
+
 const baseAdoption = z.object({
-  id: z.string().optional(),
-  animalId: z.string(),
+  id: uuid.optional(),
+  animalId: uuid,
   notes: z.string().nullable().optional(),
-  createdAt: z.string().datetime().optional(),
-  updatedAt: z.string().datetime().optional(),
+  createdAt: isoDatetime.optional(),
+  updatedAt: isoDatetime.optional(),
 });
 
 export const adoptionSchema = z.discriminatedUnion('status', [
@@ -28,87 +31,87 @@ export const adoptionSchema = z.discriminatedUnion('status', [
   }),
   baseAdoption.extend({
     status: z.literal('IN_PROGRESS'),
-    adopterProfileId: z.string(),
+    adopterProfileId: uuid,
   }),
   baseAdoption.extend({
     status: z.literal('VISIT_PENDING'),
-    adopterProfileId: z.string(),
-    visitScheduledFor: z.string().datetime(),
+    adopterProfileId: uuid,
+    visitScheduledFor: isoDatetime,
   }),
   baseAdoption.extend({
     status: z.literal('VISITED'),
-    adopterProfileId: z.string(),
-    visitScheduledFor: z.string().datetime(),
-    visitedAt: z.string().datetime(),
+    adopterProfileId: uuid,
+    visitScheduledFor: isoDatetime,
+    visitedAt: isoDatetime,
   }),
   baseAdoption.extend({
     status: z.literal('IN_ADAPTATION'),
-    adopterProfileId: z.string(),
-    visitScheduledFor: z.string().datetime(),
-    visitedAt: z.string().datetime(),
-    adaptationStartedAt: z.string().datetime(),
-    adaptationEndedAt: z.string().datetime().nullable().optional(),
+    adopterProfileId: uuid,
+    visitScheduledFor: isoDatetime,
+    visitedAt: isoDatetime,
+    adaptationStartedAt: isoDatetime,
+    adaptationEndedAt: isoDatetime.nullable().optional(),
   }),
   baseAdoption.extend({
     status: z.literal('ADOPTED'),
-    adopterProfileId: z.string(),
-    visitScheduledFor: z.string().datetime().nullable().optional(),
-    visitedAt: z.string().datetime().nullable().optional(),
-    adaptationStartedAt: z.string().datetime().nullable().optional(),
-    adaptationEndedAt: z.string().datetime().nullable().optional(),
-    adoptionDate: z.string().datetime(),
+    adopterProfileId: uuid,
+    visitScheduledFor: isoDatetime.nullable().optional(),
+    visitedAt: isoDatetime.nullable().optional(),
+    adaptationStartedAt: isoDatetime.nullable().optional(),
+    adaptationEndedAt: isoDatetime.nullable().optional(),
+    adoptionDate: isoDatetime,
   }),
   baseAdoption.extend({
     status: z.literal('CANCELED'),
-    adopterProfileId: z.string().nullable().optional(),
+    adopterProfileId: uuid.nullable().optional(),
     cancelReason: z.string().min(1),
-    visitScheduledFor: z.string().datetime().nullable().optional(),
-    visitedAt: z.string().datetime().nullable().optional(),
-    adaptationStartedAt: z.string().datetime().nullable().optional(),
-    adaptationEndedAt: z.string().datetime().nullable().optional(),
+    visitScheduledFor: isoDatetime.nullable().optional(),
+    visitedAt: isoDatetime.nullable().optional(),
+    adaptationStartedAt: isoDatetime.nullable().optional(),
+    adaptationEndedAt: isoDatetime.nullable().optional(),
   }),
   baseAdoption.extend({
     status: z.literal('REJECTED'),
-    adopterProfileId: z.string().nullable().optional(),
+    adopterProfileId: uuid.nullable().optional(),
     cancelReason: z.string().min(1),
     decisionNotes: z.string().nullable().optional(),
-    visitScheduledFor: z.string().datetime().nullable().optional(),
-    visitedAt: z.string().datetime().nullable().optional(),
-    adaptationStartedAt: z.string().datetime().nullable().optional(),
-    adaptationEndedAt: z.string().datetime().nullable().optional(),
+    visitScheduledFor: isoDatetime.nullable().optional(),
+    visitedAt: isoDatetime.nullable().optional(),
+    adaptationStartedAt: isoDatetime.nullable().optional(),
+    adaptationEndedAt: isoDatetime.nullable().optional(),
   }),
 ]);
 
 export type AdoptionData = z.infer<typeof adoptionSchema>;
 
 export const scheduleVisitSchema = z.object({
-  adoptionId: z.string(),
-  visitScheduledFor: z.string().datetime(),
+  adoptionId: uuid,
+  visitScheduledFor: isoDatetime,
 });
 
 export const registerVisitSchema = z.object({
-  adoptionId: z.string(),
-  visitedAt: z.string().datetime(),
+  adoptionId: uuid,
+  visitedAt: isoDatetime,
 });
 
 export const startAdaptationSchema = z.object({
-  adoptionId: z.string(),
-  adaptationStartedAt: z.string().datetime(),
+  adoptionId: uuid,
+  adaptationStartedAt: isoDatetime,
 });
 
 export const finalizeAdoptionSchema = z.object({
-  adoptionId: z.string(),
-  adoptionDate: z.string().datetime(),
-  adopterProfileId: z.string(),
+  adoptionId: uuid,
+  adoptionDate: isoDatetime,
+  adopterProfileId: uuid,
 });
 
 export const cancelAdoptionSchema = z.object({
-  adoptionId: z.string(),
+  adoptionId: uuid,
   cancelReason: z.string().min(1),
 });
 
 export const rejectAdoptionSchema = z.object({
-  adoptionId: z.string(),
+  adoptionId: uuid,
   cancelReason: z.string().min(1),
   decisionNotes: z.string().nullable().optional(),
 });

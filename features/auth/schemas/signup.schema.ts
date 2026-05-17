@@ -8,7 +8,7 @@ export const signupSchema = z.object({
   tradeName: z.string().optional(),
   corporateName: z.string().optional(),
   cnpj: z.string().optional(),
-  email: z.string().email("E-mail inválido").min(1, "E-mail é obrigatório"),
+  email: z.email({ error: "E-mail inválido" }),
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
 }).superRefine((data, ctx) => {
   if (data.role === "adotante" || data.role === "doador") {
